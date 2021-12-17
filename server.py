@@ -96,5 +96,35 @@ def try_intify(num: Union[int, float, bool, str, complex]) -> Union[int, bool]:
         return False
 
 
+def validate_input(in_data: dict,  # TESTED
+                   expected: Dict[str, type]) -> Tuple[Union[str, bool], int]:
+    """Determines if the data given is a dictionary, if the key exsists in
+    the input, and if the value in the key matches the type that was expected.
+
+    An expectation of the type of data in each key is established
+    and fed into this function along with a dictionary data set.
+    The Validate input funx then checks if the input was a dictionary(if not,
+    return string and 400 error), if the key specified is missing(if missing
+    return string and 400 error), and if the data type of each key is correct
+    (if not return str and 400).
+
+    :param in_data: dictionary of data
+    :param expected: dictionary data key types expectations (tuple)
+
+    :returns: String and 400 error (not dicionary, missing key, and
+    wrong  dictionary value type) or True + 200 code.
+    """
+    if not isinstance(in_data, dict):
+        return "The input was not a dictionary.", 400
+    for key, value in expected.items():
+        if key not in in_data.keys():
+            return "the key {} is missing from the input".format(key), 400
+        elif not isinstance(in_data[key], value):
+            return "the key '{}' is a {}," \
+                   " should be {}".format(key, type(in_data[key]),
+                                          expected[key]), 400
+    return True, 200
+
+
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000)
