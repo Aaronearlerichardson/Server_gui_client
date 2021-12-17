@@ -1,6 +1,7 @@
 from flask import Flask, request
 from pandas import DataFrame
 from typing import Union, Dict, Tuple
+from ecg_reader import is_num
 
 app = Flask(__name__)
 db = DataFrame()
@@ -116,16 +117,10 @@ def try_floatify(num: Union[int, float, bool, str, complex]
         point number itself
     :rtype: Union[float, bool]
     """
-    if isinstance(num, complex):
-        if num.imag == 0:
-            num = num.real
-        else:
-            return False
-    elif isinstance(num, bool):
-        return False
-    try:
+
+    if is_num(num):
         return float(num)
-    except ValueError:
+    else:
         return False
 
 

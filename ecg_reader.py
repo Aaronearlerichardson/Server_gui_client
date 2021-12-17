@@ -69,7 +69,7 @@ def is_num(num: Any) -> bool:
     try:
         float(num)
         return True
-    except Exception:
+    except ValueError:
         return False
 
 
