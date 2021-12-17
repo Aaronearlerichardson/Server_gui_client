@@ -63,7 +63,7 @@ def new_patient():  # no test needed!
     if error_str is not True:
         return error_str, status_code
     data: Dict[str, Union[int, str, float]]
-    db.append(data)
+    db.append(data, ignore_index=True)
     return "Added patient {}".format(data["id"]), 200
 
 
@@ -160,4 +160,4 @@ def validate_input(in_data: dict,  # TESTED
 
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000)
+    app.run() # host="0.0.0.0", port=5000)
