@@ -64,7 +64,7 @@ def new_patient():  # no test needed!
     if error_str is not True:
         return error_str, status_code
     data: Dict[str, Union[int, str, float]]
-    db.append(data, ignore_index=True)
+    db.append(data, ignore_index=True)  # TODO: fix DB update name & append ID
     return "Added patient {}".format(data["id"]), 200
 
 
