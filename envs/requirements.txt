@@ -3,3 +3,10 @@ pytest-pycodestyle
 flask
 requests
 testfixtures
+pandas
+numpy
+mne
+scipy
+matplotlib
+testfixtures
+neurokit2
