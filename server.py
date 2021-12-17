@@ -1,8 +1,10 @@
 from flask import Flask, request
 from pandas import DataFrame
+from typing import Union, Dict, Tuple
 
 app = Flask(__name__)
 db = DataFrame()
+
 
 @app.route("/", methods=["GET"])
 def get_status():  # no test needed!
@@ -51,33 +53,34 @@ def new_patient():  # no test needed!
     and patient_age; string + error code or string + completion code
     """
     data = request.get_json()
-    data["patient_id"] = try_intify(data["patient_id"])
-    data["patient_age"] = try_intify(data["patient_age"])
+    data["id"] = try_intify(data["id"])
+    data["hr"] = try_floatify(data["hr"])
     for key, i in data.items():
         if i is False:
             return "key {} is not convertable to an integer".format(key), 400
-    expected_keys = {"patient_id": int, "attending_username": str,
-                     "patient_age": int}
+    expected_keys = {"id": int, "name": str, "hr": float}
     error_str, status_code = validate_input(data, expected_keys)
     if error_str is not True:
         return error_str, status_code
-    return "Added patient {}".format(added), 200
+    data: Dict[str, Union[int, str, float]]
+    db.append(data)
+    return "Added patient {}".format(data["id"]), 200
 
 
 def try_intify(num: Union[int, float, bool, str, complex]) -> Union[int, bool]:
-    """Tries to convert input to interger and if this is not possible,
-    then the funx returns false.
+    """Tries to convert input to integer and if this is not possible,
+    then the func returns false.
 
-    The funx runs the value through a series of statements that
+    The func runs the value through a series of statements that
     determine if the value has an imaginary value of 0 (return only the
-    real interger value or otherwise to return False), if the value
-    is a float and if it is equal to the interger of that value
-    (returns the interger), if the value is a boolean (returns False),
+    real integer value or otherwise to return False), if the value
+    is a float and if it is equal to the integer of that value
+    (returns the integer), if the value is a boolean (returns False),
     or if there is any other error to return False.
 
     :param num: single value can be int, float, bool, str, complex
 
-    :returns: interger; False (if not convertible to int ot for any other
+    :returns: integer; False (if not convertible to int ot for any other
     error).
     """
     if isinstance(num, complex):  # TESTED
@@ -92,6 +95,36 @@ def try_intify(num: Union[int, float, bool, str, complex]) -> Union[int, bool]:
             return int(num)
         else:
             return False
+    except ValueError:
+        return False
+
+
+def try_floatify(num: Union[int, float, bool, str, complex]
+                 ) -> Union[float, bool]:
+    """Function that tests if object can be converted to number
+
+    A function that takes any input and detects if it is a number by
+    attempting to convert the input to a float. This function catches
+    convertable digit string cases.
+
+    Source:
+    https://stackoverflow.com/questions/354038
+
+    :param num: object data to determine if it is conceivably a number
+    :type num: Union[int, float, bool, str, complex]
+    :return: a boolean determination if the input is a number, or the floating
+        point number itself
+    :rtype: Union[float, bool]
+    """
+    if isinstance(num, complex):
+        if num.imag == 0:
+            num = num.real
+        else:
+            return False
+    elif isinstance(num, bool):
+        return False
+    try:
+        return float(num)
     except ValueError:
         return False
 
