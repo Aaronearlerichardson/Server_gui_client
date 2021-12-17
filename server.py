@@ -119,6 +119,8 @@ def try_floatify(num: Union[int, float, bool, str, complex]
     """
 
     if is_num(num):
+        if isinstance(num, complex):
+            num = num.real
         return float(num)
     else:
         return False
@@ -155,4 +157,4 @@ def validate_input(in_data: dict,  # TESTED
 
 
 if __name__ == '__main__':
-    app.run() # host="0.0.0.0", port=5000)
+    app.run()  # host="0.0.0.0", port=5000)
