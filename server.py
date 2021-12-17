@@ -61,8 +61,39 @@ def new_patient():  # no test needed!
     error_str, status_code = validate_input(data, expected_keys)
     if error_str is not True:
         return error_str, status_code
-
     return "Added patient {}".format(added), 200
+
+
+def try_intify(num: Union[int, float, bool, str, complex]) -> Union[int, bool]:
+    """Tries to convert input to interger and if this is not possible,
+    then the funx returns false.
+
+    The funx runs the value through a series of statements that
+    determine if the value has an imaginary value of 0 (return only the
+    real interger value or otherwise to return False), if the value
+    is a float and if it is equal to the interger of that value
+    (returns the interger), if the value is a boolean (returns False),
+    or if there is any other error to return False.
+
+    :param num: single value can be int, float, bool, str, complex
+
+    :returns: interger; False (if not convertible to int ot for any other
+    error).
+    """
+    if isinstance(num, complex):  # TESTED
+        if num.imag == 0:
+            num = num.real
+        else:
+            return False
+    elif isinstance(num, bool):
+        return False
+    try:
+        if int(num) == float(num):
+            return int(num)
+        else:
+            return False
+    except ValueError:
+        return False
 
 
 if __name__ == '__main__':
