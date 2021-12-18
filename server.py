@@ -22,7 +22,7 @@ def get_status():  # no test needed!
     return "Server is on"
 
 
-@app.route("/new_patient", methods=["POST"])
+@app.route("/new_patie nt", methods=["POST"])
 def new_patient():  # no test needed!
     """This applies the new_patient route to post
     new patient information to a dictionary.
