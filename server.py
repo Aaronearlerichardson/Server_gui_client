@@ -68,6 +68,22 @@ def new_patient():  # no test needed!
     return "Added patient {}".format(data["id"]), 200
 
 
+@app.route("/get/<name_or_mrn>", methods=["GET"])
+def get_data(name_or_mrn: Union[str, int]):
+
+    mrn = try_intify(name_or_mrn)
+    name = name_or_mrn
+    if mrn is not False:
+        matches = db.loc[db["id"] == mrn].to_dict("records")
+    else:
+        matches = db.loc[db["name"] == name].to_dict("records")
+    if matches:
+        return matches[-1], 200
+    else:
+        return "given ID {} does not match any MRN or " \
+               "patient name on file". format(name_or_mrn), 405
+
+
 def try_intify(num: Union[int, float, bool, str, complex]) -> Union[int, bool]:
     """Tries to convert input to integer and if this is not possible,
     then the func returns false.
