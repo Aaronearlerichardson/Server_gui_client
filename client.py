@@ -11,7 +11,7 @@ server = "http://127.0.0.1:5000"
 PathLike = TypeVar("PathLike", str, bytes, os.PathLike)
 
 
-def image_to_b64(img_obj: plt.Figure, img_file: PathLike = "temp.png") -> str:
+def image_to_b64(img_obj: plt.Figure, img_file: PathLike = "temp.jpg") -> str:
     img_obj.savefig(img_file)
     with open(img_file, "rb") as image_file:
         b64_bytes = base64.b64encode(image_file.read())

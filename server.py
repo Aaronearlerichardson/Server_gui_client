@@ -1,7 +1,8 @@
-from flask import Flask, request
+from flask import Flask, request, render_template_string
 from pandas import DataFrame, Series
 from typing import Union, Dict, Tuple
 from ecg_reader import is_num
+import base64
 
 app = Flask(__name__)
 db_keys = {"id": int, "name": str, "hr": float, "image": str}
@@ -83,6 +84,19 @@ def get_data(name_or_mrn: Union[str, int]):
     else:
         return "given ID {} does not match any MRN or " \
                "patient name on file". format(name_or_mrn), 405
+
+
+@app.route("/get/<name_or_mrn>/image", methods=["GET"])
+def get_image(name_or_mrn: Union[str, int]):
+    data, ret_val = get_data(name_or_mrn)
+    if not ret_val == 200:
+        return data, ret_val
+    data: dict
+    b64_img = data["image"]
+    template_string = "<img src='data:image/jpeg;base64,{{ img_data }}'" \
+                      " alt='img_data'  id='imgslot'/>"
+    page = render_template_string(template_string, img_data=b64_img)
+    return page, 200
 
 
 def try_intify(num: Union[int, float, bool, str, complex]) -> Union[int, bool]:
