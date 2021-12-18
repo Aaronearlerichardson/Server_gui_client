@@ -22,7 +22,7 @@ def get_status():  # no test needed!
     return "Server is on"
 
 
-@app.route("/new_patie nt", methods=["POST"])
+@app.route("/new_patient", methods=["POST"])
 def new_patient():  # no test needed!
     """This applies the new_patient route to post
     new patient information to a dictionary.
@@ -59,7 +59,7 @@ def new_patient():  # no test needed!
     for key, i in data.items():
         if i is False:
             return "key {} is not convertable to an integer".format(key), 400
-    expected_keys = {"id": int, "name": str, "hr": float}
+    expected_keys = {"id": int, "name": str, "hr": float, "image": str}
     error_str, status_code = validate_input(data, expected_keys)
     if error_str is not True:
         return error_str, status_code
