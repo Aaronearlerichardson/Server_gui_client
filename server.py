@@ -1,10 +1,12 @@
 from flask import Flask, request
-from pandas import DataFrame
+from pandas import DataFrame, Series
 from typing import Union, Dict, Tuple
 from ecg_reader import is_num
 
 app = Flask(__name__)
-db = DataFrame()
+db_keys = {"id": int, "name": str, "hr": float, "image": str}
+df_temp = {key: Series(dtype=value) for (key, value) in db_keys.items()}
+db = DataFrame(df_temp)
 
 
 @app.route("/", methods=["GET"])
@@ -59,12 +61,11 @@ def new_patient():  # no test needed!
     for key, i in data.items():
         if i is False:
             return "key {} is not convertable to an integer".format(key), 400
-    expected_keys = {"id": int, "name": str, "hr": float, "image": str}
-    error_str, status_code = validate_input(data, expected_keys)
+    error_str, status_code = validate_input(data, db_keys)
     if error_str is not True:
         return error_str, status_code
     data: Dict[str, Union[int, str, float]]
-    db.append(data, ignore_index=True)  # TODO: fix DB update name & append ID
+    db.loc[len(db)] = data  # TODO: fix DB update name & append ID
     return "Added patient {}".format(data["id"]), 200
 
 
