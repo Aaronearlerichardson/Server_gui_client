@@ -24,7 +24,7 @@ def data_to_fig(data: DataFrame, img_file: PathLike = "temp.jpg"):
     plt.savefig(img_file)
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # TODO: make the main shorter or put in a function
     folder = "test_data"
     filename = os.path.join(folder, "test_data1.csv")
     pre_data = preprocess_data(filename, raw_max=300, l_freq=1, h_freq=50,
@@ -40,7 +40,7 @@ if __name__ == "__main__":
     patient1 = {"patient_name": "Ann Ables",
                 "patient_id": 201,
                 "hr": metrics["mean_hr_bpm"],
-                "image": b64_str}
+                "image": [b64_str]}
     r = requests.post(server + "/new_patient", json=patient1)
     print(r.status_code)
     print(r.text)
