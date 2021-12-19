@@ -87,7 +87,7 @@ def get_image(name_or_mrn: str) -> Tuple[str, int]:
         data = db.search(patient_id=mrn, patient_name=name_or_mrn)
     except IndexError as e:
         return str(e), 405
-    b64_img = data["image"]
+    b64_img = data["image"][-1]
     name = data["patient_name"]
     page = render_image(b64_img, name)
     return page, 200

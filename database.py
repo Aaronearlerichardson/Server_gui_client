@@ -56,9 +56,12 @@ class Database(List[dict]):
             try:
                 same_id = self.search(**{self.Index: entry[self.Index]})
                 replace_index = self.index(same_id)
-                for key, value in entry.items():
-                    if isinstance(value, list):  # check for appendable item
-                        entry[key] = entry[key] + same_id[key]
+                for key, value in same_id.items():
+                    # check for appendable items/update existing info
+                    if key not in entry.keys():
+                        entry[key] = value
+                    elif isinstance(value, list):
+                        entry[key] = value + entry[key]
                 self[replace_index] = entry
             except IndexError:
                 self.append(entry)
@@ -74,6 +77,7 @@ class Database(List[dict]):
                     vars(self)[key].append(item[key])
                 else:
                     vars(self)[key].append(None)
+            vars(self)[key] = tuple(vars(self)[key])
         return entry
 
     def search(self, get: str = "latest", **kwargs) -> Union[dict, List[dict]]:
@@ -119,9 +123,9 @@ class Database(List[dict]):
 
 
 if __name__ == "__main__":
-    mydb = Database({"a": 1, "b": 2, "c": [3]}, {"a": 1, "b": 3, "c": [4]},
+    mydb = Database({"a": 1, "b": 2}, {"a": 2, "b": 3, "c": [4]},
                     index="a")
-    mydb.add_entry({"a": 2, "c": [4]})
-    mydb.add_entry({"a": 3, "b": 3})
+    mydb.add_entry({"a": 1}, **{"c": [4]})
+    mydb.add_entry({"a": 1, "b": 3})
     print(mydb.b)
     print(mydb)
