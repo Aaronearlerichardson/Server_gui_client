@@ -24,8 +24,6 @@ def data_to_fig(data: DataFrame) -> plt.Figure:
     plt.ioff()
     fig = plt.figure()
     plt.plot(data["time"], data["voltage"])
-    # fig, ax = plt.subplots()
-    # ax.plot(data["time"], data["voltage"])
     return fig
 
 

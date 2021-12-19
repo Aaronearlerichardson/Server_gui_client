@@ -1,8 +1,7 @@
 from flask import Flask, request, render_template_string
 from pandas import DataFrame, Series
-from typing import Union, Dict, Tuple
+from typing import Union, Dict, Tuple, List
 from ecg_reader import is_num
-import base64
 
 app = Flask(__name__)
 db_keys = {"id": int, "name": str, "hr": float, "image": str}
@@ -31,7 +30,7 @@ def new_patient():  # no test needed!
     new patient information to a dictionary.
 
     This function is a POST request that when the address
-    http://vcm-23126.vm.duke.edu/api/new_patient is inputted online, returns a
+    http://vcm-23126.vm.duke.edu/new_patient is inputted online, returns a
     jsonified string that states a dictionary of the patient_id, the
     attending_username, and the patient_age. This function uses the posted
     dictionary of new patient data and checks the id and age calling the try
@@ -71,32 +70,59 @@ def new_patient():  # no test needed!
 
 
 @app.route("/get/<name_or_mrn>", methods=["GET"])
-def get_data(name_or_mrn: Union[str, int]):
-
-    mrn = try_intify(name_or_mrn)
-    name = name_or_mrn
-    if mrn is not False:
-        matches = db.loc[db["id"] == mrn].to_dict("records")
-    else:
-        matches = db.loc[db["name"] == name].to_dict("records")
+def get_data(name_or_mrn: str) -> Tuple[Union[dict, str], int]:
+    matches = get_matching_data(name_or_mrn)
     if matches:
-        return matches[-1], 200
+        match = matches[-1]
+        del match["image"]
+        return match, 200
     else:
         return "given ID {} does not match any MRN or " \
-               "patient name on file". format(name_or_mrn), 405
+               "patient name on file".format(name_or_mrn), 405
 
 
 @app.route("/get/<name_or_mrn>/image", methods=["GET"])
-def get_image(name_or_mrn: Union[str, int]):
-    data, ret_val = get_data(name_or_mrn)
-    if not ret_val == 200:
-        return data, ret_val
-    data: dict
+def get_image(name_or_mrn):
+    matches = get_matching_data(name_or_mrn)
+    if not matches:
+        return "given ID {} does not match any MRN or " \
+               "patient name on file".format(name_or_mrn), 405
+    data = matches[-1]
     b64_img = data["image"]
-    template_string = "<img src='data:image/jpeg;base64,{{ img_data }}'" \
-                      " alt='img_data'  id='imgslot'/>"
-    page = render_template_string(template_string, img_data=b64_img)
+    name = data["name"]
+    page = render_image(b64_img, name)
     return page, 200
+
+
+def render_image(b64_img: str, name: str) -> str:
+    template_string = """<!DOCTYPE html>
+    <html lang='en-US'>
+    <head>
+    <title>
+        {{ my_title }}
+    </title>
+    </head>
+    <body>
+    <h1>{{ my_title }}<h1>
+    <img src='data:image/jpeg;base64,{{ img_data }}' 
+        alt='img_data'  id='imgslot'/>
+    </body>
+    </html>"""
+    page = render_template_string(template_string,
+                                  my_title=name,
+                                  img_data=b64_img)
+    return page
+
+
+def get_matching_data(name_or_mrn: str) -> List[dict]:
+    mrn = try_intify(name_or_mrn)
+    name = name_or_mrn
+    if mrn is not False:
+        matches = db[db["id"] == mrn]
+    else:
+        matches = db[db["name"] == name]
+    match_list = matches.to_dict("records")
+    return match_list
 
 
 def try_intify(num: Union[int, float, bool, str, complex]) -> Union[int, bool]:
