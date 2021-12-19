@@ -1,4 +1,7 @@
 import pytest
+with open("b64.txt", "r") as fobj:
+    b64_str = fobj.read()
+import server as serv
 
 
 @pytest.mark.parametrize("my_input, expected", [
@@ -13,8 +16,7 @@ import pytest
     ("123", 123)
 ])
 def test_intify(my_input, expected):
-    from server import try_intify
-    answer = try_intify(my_input)
+    answer = serv.try_intify(my_input)
     assert answer == expected
 
 
@@ -29,8 +31,7 @@ def test_intify(my_input, expected):
     ("123.3", 123.3)
 ])
 def test_floatify(my_input, expected):
-    from server import try_floatify
-    answer = try_floatify(my_input)
+    answer = serv.try_floatify(my_input)
     assert answer == expected
 
 
@@ -47,6 +48,24 @@ def test_floatify(my_input, expected):
      ("The input was not a dictionary.", 400))
 ])
 def test_inputs(my_input, exp_in, exp_out):
-    from server import validate_input
-    answer = validate_input(my_input, exp_in)
+    answer = serv.validate_input(my_input, exp_in)
     assert answer == exp_out
+
+
+def test_rendering():
+    expected = """<h1>Ann Ables<h1>
+    <img src='data:image/jpeg;base64,{}' 
+        alt='img_data'  id='imgslot'/>""".format(b64_str)
+    with serv.app.app_context():
+        answer = serv.render_image(b64_str, "Ann Ables")
+    assert answer == expected
+
+
+@pytest.mark.parametrize("my_input, expected", [
+    ("201",),
+    ("Ann Ables",)
+])
+def test_matching(my_input, expected):
+    answer = serv.get_matching_data(my_input)
+    assert answer == expected
+

@@ -95,19 +95,9 @@ def get_image(name_or_mrn):
 
 
 def render_image(b64_img: str, name: str) -> str:
-    template_string = """<!DOCTYPE html>
-    <html lang='en-US'>
-    <head>
-    <title>
-        {{ my_title }}
-    </title>
-    </head>
-    <body>
-    <h1>{{ my_title }}<h1>
+    template_string = """<h1>{{ my_title }}<h1>
     <img src='data:image/jpeg;base64,{{ img_data }}' 
-        alt='img_data'  id='imgslot'/>
-    </body>
-    </html>"""
+        alt='img_data'  id='imgslot'/>"""
     page = render_template_string(template_string,
                                   my_title=name,
                                   img_data=b64_img)
