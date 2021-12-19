@@ -1,8 +1,11 @@
 import pytest
-with open("b64.txt", "r") as fobj:
-    b64_str = fobj.read()
+import os
 import server as serv
 import database as db
+
+filename = os.path.join("tests", "b64.txt")
+with open(filename, "r") as fobj:
+    b64_str = fobj.read()
 
 
 @pytest.mark.parametrize("my_input, expected", [
@@ -55,7 +58,7 @@ def test_inputs(my_input, exp_in, exp_out):
 
 def test_rendering():
     expected = """<h1>Ann Ables<h1>
-    <img src='data:image/jpeg;base64,{}' 
+    <img src='data:image/jpeg;base64,{}'
         alt='img_data'  id='imgslot'/>""".format(b64_str)
     with serv.app.app_context():
         answer = serv.render_image(b64_str, "Ann Ables")

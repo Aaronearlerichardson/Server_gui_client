@@ -11,20 +11,17 @@ server = "http://127.0.0.1:5000"
 PathLike = TypeVar("PathLike", str, bytes, os.PathLike)
 
 
-def image_to_b64(img_obj: plt.Figure, img_file: PathLike = "temp.jpg") -> str:
-    img_obj.savefig(img_file)
+def image_to_b64(img_file: PathLike = "temp.jpg") -> str:
     with open(img_file, "rb") as image_file:
         b64_bytes = base64.b64encode(image_file.read())
     b64_string = str(b64_bytes, encoding="utf-8")
-    os.remove(img_file)
     return b64_string
 
 
-def data_to_fig(data: DataFrame) -> plt.Figure:
+def data_to_fig(data: DataFrame, img_file: PathLike = "temp.jpg"):
     plt.ioff()
-    fig = plt.figure()
     plt.plot(data["time"], data["voltage"])
-    return fig
+    plt.savefig(img_file)
 
 
 if __name__ == "__main__":
@@ -33,8 +30,12 @@ if __name__ == "__main__":
     pre_data = preprocess_data(filename, raw_max=300, l_freq=1, h_freq=50,
                                phase="zero-double", fir_window="hann",
                                fir_design="firwin")
-    figure = data_to_fig(pre_data)
-    b64_str = image_to_b64(figure)
+
+    img_file = "temp.jpg"
+    data_to_fig(pre_data, img_file)
+    b64_str = image_to_b64(img_file)
+    os.remove(img_file)
+
     metrics = get_metrics(pre_data, rounding=4)
     patient1 = {"patient_name": "Ann Ables",
                 "patient_id": 201,
