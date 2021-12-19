@@ -36,7 +36,9 @@ if __name__ == "__main__":
     figure = data_to_fig(pre_data)
     b64_str = image_to_b64(figure)
     metrics = get_metrics(pre_data, rounding=4)
-    patient1 = {"name": "Ann Ables", "id": 201, "hr": metrics["mean_hr_bpm"],
+    patient1 = {"patient_name": "Ann Ables",
+                "patient_id": 201,
+                "hr": metrics["mean_hr_bpm"],
                 "image": b64_str}
     r = requests.post(server + "/new_patient", json=patient1)
     print(r.status_code)

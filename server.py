@@ -1,12 +1,11 @@
 from flask import Flask, request, render_template_string
-from pandas import DataFrame, Series
-from typing import Union, Dict, Tuple, List
+from typing import Union, Dict, Tuple
 from ecg_reader import is_num
+from database import Database
 
 app = Flask(__name__)
-db_keys = {"id": int, "name": str, "hr": float, "image": str}
-df_temp = {key: Series(dtype=value) for (key, value) in db_keys.items()}
-db = DataFrame(df_temp)
+db_keys = {"patient_id": int, "patient_name": str, "hr": float, "image": str}
+db = Database()
 
 
 @app.route("/", methods=["GET"])
@@ -56,7 +55,7 @@ def new_patient():  # no test needed!
     and patient_age; string + error code or string + completion code
     """
     data = request.get_json()
-    data["id"] = try_intify(data["id"])
+    data["patient_id"] = try_intify(data["patient_id"])
     data["hr"] = try_floatify(data["hr"])
     for key, i in data.items():
         if i is False:
@@ -65,31 +64,31 @@ def new_patient():  # no test needed!
     if error_str is not True:
         return error_str, status_code
     data: Dict[str, Union[int, str, float]]
-    db.loc[len(db)] = data  # TODO: fix DB update name & append ID
-    return "Added patient {}".format(data["id"]), 200
+    db.add_entry(data)
+    #  db.loc[len(db)] = data TODO: fix DB update name & append ID
+    return "Added patient {}".format(data["patient_id"]), 200
 
 
 @app.route("/get/<name_or_mrn>", methods=["GET"])
 def get_data(name_or_mrn: str) -> Tuple[Union[dict, str], int]:
-    matches = get_matching_data(name_or_mrn)
-    if matches:
-        match = matches[-1]
+    try:
+        mrn = try_intify(name_or_mrn)
+        match = db.search(patient_id=mrn, patient_name=name_or_mrn)
         del match["image"]
         return match, 200
-    else:
-        return "given ID {} does not match any MRN or " \
-               "patient name on file".format(name_or_mrn), 405
+    except IndexError as e:
+        return str(e), 405
 
 
 @app.route("/get/<name_or_mrn>/image", methods=["GET"])
-def get_image(name_or_mrn):
-    matches = get_matching_data(name_or_mrn)
-    if not matches:
-        return "given ID {} does not match any MRN or " \
-               "patient name on file".format(name_or_mrn), 405
-    data = matches[-1]
+def get_image(name_or_mrn: str) -> Tuple[str, int]:
+    try:
+        mrn = try_intify(name_or_mrn)
+        data = db.search(patient_id=mrn, patient_name=name_or_mrn)
+    except IndexError as e:
+        return str(e), 405
     b64_img = data["image"]
-    name = data["name"]
+    name = data["patient_name"]
     page = render_image(b64_img, name)
     return page, 200
 
@@ -102,17 +101,6 @@ def render_image(b64_img: str, name: str) -> str:
                                   my_title=name,
                                   img_data=b64_img)
     return page
-
-
-def get_matching_data(name_or_mrn: str) -> List[dict]:
-    mrn = try_intify(name_or_mrn)
-    name = name_or_mrn
-    if mrn is not False:
-        matches = db[db["id"] == mrn]
-    else:
-        matches = db[db["name"] == name]
-    match_list = matches.to_dict("records")
-    return match_list
 
 
 def try_intify(num: Union[int, float, bool, str, complex]) -> Union[int, bool]:
