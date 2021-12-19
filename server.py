@@ -1,10 +1,11 @@
-from flask import Flask, request
-from pandas import DataFrame
+from flask import Flask, request, render_template_string
 from typing import Union, Dict, Tuple
 from ecg_reader import is_num
+from database import Database
 
 app = Flask(__name__)
-db = DataFrame()
+db_keys = {"patient_id": int, "patient_name": str, "hr": float, "image": str}
+db = Database()
 
 
 @app.route("/", methods=["GET"])
@@ -28,7 +29,7 @@ def new_patient():  # no test needed!
     new patient information to a dictionary.
 
     This function is a POST request that when the address
-    http://vcm-23126.vm.duke.edu/api/new_patient is inputted online, returns a
+    http://vcm-23126.vm.duke.edu/new_patient is inputted online, returns a
     jsonified string that states a dictionary of the patient_id, the
     attending_username, and the patient_age. This function uses the posted
     dictionary of new patient data and checks the id and age calling the try
@@ -54,18 +55,52 @@ def new_patient():  # no test needed!
     and patient_age; string + error code or string + completion code
     """
     data = request.get_json()
-    data["id"] = try_intify(data["id"])
+    data["patient_id"] = try_intify(data["patient_id"])
     data["hr"] = try_floatify(data["hr"])
     for key, i in data.items():
         if i is False:
             return "key {} is not convertable to an integer".format(key), 400
-    expected_keys = {"id": int, "name": str, "hr": float}
-    error_str, status_code = validate_input(data, expected_keys)
+    error_str, status_code = validate_input(data, db_keys)
     if error_str is not True:
         return error_str, status_code
     data: Dict[str, Union[int, str, float]]
-    db.append(data, ignore_index=True)  # TODO: fix DB update name & append ID
-    return "Added patient {}".format(data["id"]), 200
+    db.add_entry(data)
+    #  db.loc[len(db)] = data TODO: fix DB update name & append ID
+    return "Added patient {}".format(data["patient_id"]), 200
+
+
+@app.route("/get/<name_or_mrn>", methods=["GET"])
+def get_data(name_or_mrn: str) -> Tuple[Union[dict, str], int]:
+    try:
+        mrn = try_intify(name_or_mrn)
+        match = db.search(patient_id=mrn, patient_name=name_or_mrn)
+        del match["image"]
+        return match, 200
+    except IndexError as e:
+        return str(e), 405
+
+
+@app.route("/get/<name_or_mrn>/image", methods=["GET"])
+def get_image(name_or_mrn: str) -> Tuple[str, int]:
+    try:
+        mrn = try_intify(name_or_mrn)
+        data = db.search(patient_id=mrn, patient_name=name_or_mrn)
+    except IndexError as e:
+        return str(e), 405
+    b64_img = data["image"]
+    name = data["patient_name"]
+    page = render_image(b64_img, name)
+    return page, 200
+
+
+def render_image(b64_img: str, name: str) -> str:
+    template_string = """<h1>{{ my_title }}<h1>
+    <img src='data:image/jpeg;base64,{{ img_data }}'
+        alt='img_data'  id='imgslot'/>"""
+    page = render_template_string(template_string,
+                                  my_title=name,
+                                  img_data=b64_img)
+    return page
 
 
 def try_intify(num: Union[int, float, bool, str, complex]) -> Union[int, bool]:

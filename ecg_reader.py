@@ -274,6 +274,7 @@ def preprocess_data(file_path: str,
                     raw_min: Union[float, int] = None,
                     l_freq: Union[float, int] = 1,
                     h_freq: Union[float, int] = 50,
+                    clean_only: bool = False,
                     **kwargs) -> DataFrame:
     """ Takes a csv ECG file and runs a full preprocessing pipeline on it
 
@@ -299,6 +300,8 @@ def preprocess_data(file_path: str,
     :type l_freq: Union[float, int]
     :param h_freq: Upper frequency band of the band pas filter
     :type h_freq: Union[float, int]
+    :param clean_only: Option to not filter the data
+    :type clean_only: bool
     :return: A fully preprocessed DataFrame of the time and voltage data
     :rtype: DataFrame
     """
@@ -314,6 +317,8 @@ def preprocess_data(file_path: str,
     pre_data = cleaned
     pre_data.name = cleaned.name
     check_range(cleaned[vlabel], raw.name, raw_max, raw_min)
+    if clean_only:
+        return cleaned
     voltage_filtered = filter_data(cleaned[vlabel],
                                    cleaned[tlabel].iloc[0],
                                    cleaned[tlabel].iloc[-1],
