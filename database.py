@@ -12,7 +12,7 @@ class Database(List[dict]):
     only the dictionaries whose key values match the requested key values.
     """
 
-    def __init__(self, *args: dict):  # TODO: make index key for non repeating
+    def __init__(self, *args: dict, index: str = None):
         """Initializes the Database class to be a list of dictionaries
 
         Initializes the Database class by calling the list __init__, setting
@@ -23,7 +23,8 @@ class Database(List[dict]):
         :type args: dict
         """
         super().__init__()
-        self.name = self.__class__.__name__
+        self.Name = self.__class__.__name__
+        self.Index = index
         for arg in args:
             self.add_entry(arg)
 
@@ -42,15 +43,37 @@ class Database(List[dict]):
         :return: The appended dictionary
         :rtype: dict
         """
+        # add extra args to the dict
         for key, value in kwargs.items():
             entry[key] = value
 
-        for key, value in entry.items():
-            if key not in vars(self).keys():
-                vars(self)[key] = []
-            vars(self)[key].append(value)
+        # check if new entry index matches any existing entries and overwrite
+        # as necessary, appending any list items within the dicts
+        if self.Index is not None:
+            if self.Index not in entry.keys():
+                raise KeyError("{} index key {} not found in new entry".format(
+                    type(self).__name__, self.Index))
+            try:
+                same_id = self.search(**{self.Index: entry[self.Index]})
+                replace_index = self.index(same_id)
+                for key, value in entry.items():
+                    if isinstance(value, list):  # check for appendable item
+                        entry[key] = entry[key] + same_id[key]
+                self[replace_index] = entry
+            except IndexError:
+                self.append(entry)
+        else:
+            self.append(entry)
 
-        self.append(entry)
+        # make attributes TODO: fix attributes overwriting parent methods
+        for key, value in entry.items():
+            # attributes must be remade each time since elements are mutable
+            vars(self)[key] = []
+            for item in self:
+                if key in item:
+                    vars(self)[key].append(item[key])
+                else:
+                    vars(self)[key].append(None)
         return entry
 
     def search(self, get: str = "latest", **kwargs) -> Union[dict, List[dict]]:
@@ -92,11 +115,13 @@ class Database(List[dict]):
                 "No {} with the value {} found in {} database".format(
                     " or ".join([str(key) for key in kwargs.keys()]),
                     " or ".join([str(value) for value in kwargs.values()]),
-                    type(self).__name__
-                ))
+                    type(self).__name__))
 
 
 if __name__ == "__main__":
-    mydb = Database({"a": 1, "b": 2})
-    print(mydb.a)
+    mydb = Database({"a": 1, "b": 2, "c": [3]}, {"a": 1, "b": 3, "c": [4]},
+                    index="a")
+    mydb.add_entry({"a": 2, "c": [4]})
+    mydb.add_entry({"a": 3, "b": 3})
+    print(mydb.b)
     print(mydb)

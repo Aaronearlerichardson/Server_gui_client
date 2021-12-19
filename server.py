@@ -4,7 +4,8 @@ from ecg_reader import is_num
 from database import Database
 
 app = Flask(__name__)
-db_keys = {"patient_id": int, "patient_name": str, "hr": float, "image": str}
+db_keys = {"patient_id": int, "patient_name": str, "hr": float,
+           "image": list}
 db = Database()
 
 
@@ -65,7 +66,6 @@ def new_patient():  # no test needed!
         return error_str, status_code
     data: Dict[str, Union[int, str, float]]
     db.add_entry(data)
-    #  db.loc[len(db)] = data TODO: fix DB update name & append ID
     return "Added patient {}".format(data["patient_id"]), 200
 
 
