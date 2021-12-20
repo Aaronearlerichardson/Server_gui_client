@@ -6,6 +6,8 @@ filename = os.path.join("tests", "b64.txt")
 with open(filename, "r") as fobj:
     b64_str = fobj.read()
 
+# TODO: test correction function
+
 
 @pytest.mark.parametrize("my_input, expected", [
     (1, 1),

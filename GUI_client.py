@@ -48,7 +48,7 @@ def create_output(patient_id: str,
     my_vars = locals()
     output = dict()
     for key, value in my_vars.items():
-        if value is not "":
+        if value:
             output[key] = value
     return output
 
