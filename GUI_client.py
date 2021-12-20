@@ -45,29 +45,31 @@ def create_output(patient_id: str,
                   patient_name: str = None,
                   image: str = None,
                   hr: str = None) -> dict:
+    my_vars = locals()
     output = dict()
-    for key, value in locals().items():
-        if value is not None:
+    for key, value in my_vars.items():
+        if value is not "":
             output[key] = value
     return output
 
 
 def design_window():
     # TODO: make dropdown list that accesses all patient data from server
-    # TODO: make label area where error messages can be displayed
     def send_button_cmd():
         name = name_data.get()
         my_id = id_data.get()
         b64_img = img_str.get()
         hr = heart_rate.get()
 
-        # call external fnx to do work that can be tested
-        # TODO: return an error message to gui unless ID is filled out
-        patient = create_output(name, my_id, b64_img, hr)
-
-        # send data to the server
-        r = requests.post(server + "/new_patient", json=patient)
-        print(r.status_code, r.text)
+        if my_id:
+            # call external fnx to do work that can be tested
+            patient = create_output(my_id, name, b64_img, hr)
+            # send data to the server
+            r = requests.post(server + "/new_patient", json=patient)
+            print_to_gui(r.text)
+            print(r.status_code)
+        else:
+            print_to_gui("patient ID is a required field")
 
     def cancel_cmd():
         root.destroy()
@@ -84,6 +86,9 @@ def design_window():
         img_grid.config(image=photo)
         img_grid.image_ref = photo  # keep as a reference
         img_label.config(text="Heart Rate: {} (bpm)".format(heart_rate.get()))
+
+    def print_to_gui(msg: str):
+        msg_label.config(text=msg)
 
     root = tk.Tk()
     root.title("Health Database GUI")
@@ -123,6 +128,9 @@ def design_window():
     heart_rate = tk.StringVar()
     img_label = ttk.Label(root, text="")
     img_label.grid(column=3, row=3, columnspan=2)
+
+    msg_label = ttk.Label(root, text="")
+    msg_label.grid(column=3, row=6, columnspan=2)
 
     root.mainloop()
 
