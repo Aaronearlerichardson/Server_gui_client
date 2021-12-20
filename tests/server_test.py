@@ -57,7 +57,7 @@ def test_inputs(my_input, exp_in, exp_out):
 
 def test_rendering():
     expected = """<h1>Ann Ables<h1>
-    <img src='data:image/jpeg;base64,{}'
+    <img src='data:image/png;base64,{}'
         alt='img_data'  id='imgslot'/>""".format(b64_str)
     with serv.app.app_context():
         answer = serv.render_image(b64_str, "Ann Ables")

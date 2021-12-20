@@ -9,4 +9,3 @@ mne
 scipy
 matplotlib
 neurokit2
-pillow

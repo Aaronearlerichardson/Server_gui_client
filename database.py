@@ -108,12 +108,12 @@ class Database(List[dict]):
                     continue
                 elif item[key] == value:
                     if get in ["latest", "first"]:
-                        return item
+                        return item.copy()
                     elif get == "all":
                         getvals.append(item)
 
         if get == "all" and getvals:
-            return self.__class__(*getvals)
+            return self.__class__(*getvals).copy()
         else:
             raise IndexError(
                 "No {} with the value {} found in {} database".format(

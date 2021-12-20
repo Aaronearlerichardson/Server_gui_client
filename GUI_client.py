@@ -1,8 +1,6 @@
 import requests
 import os
 
-from PIL.ImageTk import PhotoImage
-
 from ecg_reader import preprocess_data
 from calculations import get_metrics
 import base64
@@ -10,11 +8,11 @@ import matplotlib.pyplot as plt
 from typing import TypeVar, Tuple
 from tkinter import ttk, filedialog
 import tkinter as tk
-from PIL import Image, ImageTk
 from pandas import DataFrame
 
 server = "http://127.0.0.1:5000"
 PathLike = TypeVar("PathLike", str, bytes, os.PathLike)
+i_file = "temp.png"
 
 
 def image_to_b64(img_file: PathLike = "temp.jpg") -> str:
@@ -31,46 +29,55 @@ def data_to_fig(data: DataFrame, img_file: PathLike = "temp.jpg"):
     plt.close()
 
 
-def photometrics_from_csv(file_name: PathLike) -> Tuple[PhotoImage, dict]:
+def photometrics_from_csv(file_name: PathLike) -> Tuple[str, dict]:
     assert file_name.endswith(".csv")
     data = preprocess_data(file_name, raw_max=300, l_freq=1, h_freq=50,
                            phase="zero-double", fir_window="hann",
                            fir_design="firwin")
-    i_file = "temp.jpg"
     data_to_fig(data, i_file)
+    b64_img = image_to_b64(i_file)
     metrics = get_metrics(data, rounding=4)
-    image = Image.open(i_file)
-    photo = ImageTk.PhotoImage(image)
     os.remove(i_file)
-    return photo, metrics
+    return b64_img, metrics
+
+
+def create_output(name: str, my_id: str, b64_img: str, hr: str) -> dict:
+    output = {"patient_id": my_id,
+              "patient_name": name,
+              "hr": hr,
+              "image": [b64_img]}
+    return output
 
 
 def design_window():
-    def ok_button_cmd():
+    def send_button_cmd():
         name = name_data.get()
         my_id = id_data.get()
-        blood_letter = blood_letter_data.get()
-        rh_factor = rh_data.get()
+        b64_img = img_str.get()
+        hr = heart_rate.get()
 
         # call external fnx to do work that can be tested
-        answer = create_output(name, my_id, blood_letter, rh_factor)
-        print(answer)
+        patient = create_output(name, my_id, b64_img, hr)
+
+        # send data to the server
+        r = requests.post(server + "/new_patient", json=patient)
+        print(r.status_code, r.text)
 
     def cancel_cmd():
         root.destroy()
 
     def browse_files():
-        # TODO: modularize for testing
         file_name = filedialog.askopenfilename(
             initialdir=csv_file.get(), title="Select a File", filetypes=(
                 ("csv files", "*.csv*"), ("all files", "*.*")))
         csv_file.set(file_name)
-        photo, metrics = photometrics_from_csv(file_name)
+        b64_img, metrics = photometrics_from_csv(file_name)
+        img_str.set(b64_img)
+        heart_rate.set(str(metrics["mean_hr_bpm"]))
+        photo = tk.PhotoImage(data=b64_img)
         img_grid.config(image=photo)
-        img_grid.image = photo  # keep as a reference
-        img_label.config(text="Heart Rate: {} (bpm)".format(
-            metrics["mean_hr_bpm"]))
-        img_label.metrics = metrics
+        img_grid.image_ref = photo  # keep as a reference
+        img_label.config(text="Heart Rate: {} (bpm)".format(heart_rate.get()))
 
     root = tk.Tk()
     root.title("Health Database GUI")
@@ -94,41 +101,24 @@ def design_window():
     id_entry_box = ttk.Entry(root, width=23, textvariable=csv_file)
     id_entry_box.grid(column=5, row=1)
 
-    ok_button = ttk.Button(root, text="Ok", command=ok_button_cmd)
-    ok_button.grid(column=1, row=6)
+    send_button = ttk.Button(root, text="Send", command=send_button_cmd)
+    send_button.grid(column=1, row=6)
 
     cancel_button = ttk.Button(root, text="Cancel", command=cancel_cmd)
-    cancel_button.grid(column=2, row=6)
+    cancel_button.grid(column=6, row=6)
 
     browse_button = ttk.Button(root, text="Browse", command=browse_files)
     browse_button.grid(column=6, row=1)
-    img_grid = tk.Label(root, image=tk.PhotoImage(data=""))
+
+    img_str = tk.StringVar()
+    img_grid = tk.Label(root, image=tk.PhotoImage(data=img_str.get()))
     img_grid.grid(column=1, row=4, columnspan=6)
 
+    heart_rate = tk.StringVar()
     img_label = ttk.Label(root, text="")
     img_label.grid(column=3, row=3, columnspan=2)
 
     root.mainloop()
-
-
-def main(filename: PathLike):
-    pre_data = preprocess_data(filename, raw_max=300, l_freq=1, h_freq=50,
-                               phase="zero-double", fir_window="hann",
-                               fir_design="firwin")
-
-    img_file = "temp.jpg"
-    data_to_fig(pre_data)
-    b64_str = image_to_b64(img_file)
-    os.remove(img_file)
-
-    metrics = get_metrics(pre_data, rounding=4)
-    patient1 = {"patient_name": "Ann Ables",
-                "patient_id": 201,
-                "hr": metrics["mean_hr_bpm"],
-                "image": [b64_str]}
-    r = requests.post(server + "/new_patient", json=patient1)
-    print(r.status_code)
-    print(r.text)
 
 
 if __name__ == "__main__":
