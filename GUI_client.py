@@ -41,15 +41,20 @@ def photometrics_from_csv(file_name: PathLike) -> Tuple[str, dict]:
     return b64_img, metrics
 
 
-def create_output(name: str, my_id: str, b64_img: str, hr: str) -> dict:
-    output = {"patient_id": my_id,
-              "patient_name": name,
-              "hr": hr,
-              "image": [b64_img]}
+def create_output(patient_id: str,
+                  patient_name: str = None,
+                  image: str = None,
+                  hr: str = None) -> dict:
+    output = dict()
+    for key, value in locals().items():
+        if value is not None:
+            output[key] = value
     return output
 
 
 def design_window():
+    # TODO: make dropdown list that accesses all patient data from server
+    # TODO: make label area where error messages can be displayed
     def send_button_cmd():
         name = name_data.get()
         my_id = id_data.get()
@@ -57,6 +62,7 @@ def design_window():
         hr = heart_rate.get()
 
         # call external fnx to do work that can be tested
+        # TODO: return an error message to gui unless ID is filled out
         patient = create_output(name, my_id, b64_img, hr)
 
         # send data to the server

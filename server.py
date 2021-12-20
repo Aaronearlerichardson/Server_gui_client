@@ -2,11 +2,13 @@ from flask import Flask, request, render_template_string
 from typing import Union, Dict, Tuple
 from ecg_reader import is_num
 from database import Database
+from datetime import datetime
 
 app = Flask(__name__)
 db_keys = {"patient_id": int, "patient_name": str, "hr": float,
            "image": list}
 db = Database()
+t_format = "%m-%d-%Y %H:%M:%S"
 
 
 @app.route("/", methods=["GET"])
@@ -25,7 +27,7 @@ def get_status():  # no test needed!
 
 
 @app.route("/new_patient", methods=["POST"])
-def new_patient():  # no test needed!
+def new_patient():
     """This applies the new_patient route to post
     new patient information to a dictionary.
 
@@ -65,7 +67,7 @@ def new_patient():  # no test needed!
     if error_str is not True:
         return error_str, status_code
     data: Dict[str, Union[int, str, float]]
-    db.add_entry(data)
+    db.add_entry(data, time=datetime.now().strftime(t_format))
     return "Added patient {}".format(data["patient_id"]), 200
 
 
