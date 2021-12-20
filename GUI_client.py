@@ -5,9 +5,9 @@ from calculations import get_metrics
 import base64
 import matplotlib.pyplot as plt
 from typing import TypeVar
-from pandas import DataFrame
-from tkinter import ttk
+from tkinter import ttk, filedialog
 import tkinter as tk
+from PIL import Image, ImageTk
 
 server = "http://127.0.0.1:5000"
 PathLike = TypeVar("PathLike", str, bytes, os.PathLike)
@@ -20,7 +20,10 @@ def image_to_b64(img_file: PathLike = "temp.jpg") -> str:
     return b64_string
 
 
-def data_to_fig(data: DataFrame, img_file: PathLike = "temp.jpg"):
+def data_to_fig(csv_file: PathLike, img_file: PathLike = "temp.jpg"):
+    data = preprocess_data(csv_file, raw_max=300, l_freq=1, h_freq=50,
+                           phase="zero-double", fir_window="hann",
+                           fir_design="firwin")
     plt.ioff()
     plt.plot(data["time"], data["voltage"])
     plt.savefig(img_file)
@@ -37,98 +40,74 @@ def create_output(name, id, blood_letter, rh_factor):
 def design_window():
     def ok_button_cmd():
         name = name_data.get()
-
-        id = id_data.get()
-
+        my_id = id_data.get()
         blood_letter = blood_letter_data.get()
-
         rh_factor = rh_data.get()
 
         # call external fnx to do work that can be tested
-
-        answer = create_output(name, id, blood_letter, rh_factor)
-
+        answer = create_output(name, my_id, blood_letter, rh_factor)
         print(answer)
 
     def cancel_cmd():
         root.destroy()
 
-    root = tk.Tk()
+    def browse_files():
+        # TODO: display heart rate
+        # TODO: modularize for testing
+        file_name = filedialog.askopenfilename(
+            initialdir=csv_file.get(), title="Select a File", filetypes=(
+                ("csv files", "*.csv*"), ("all files", "*.*")))
+        i_file = "temp.jpg"
+        csv_file.set(file_name)
+        data_to_fig(file_name, i_file)
+        image = Image.open(i_file)
+        photo = ImageTk.PhotoImage(image)
+        img_grid.config(image=photo)
+        img_grid.image = photo
 
+    root = tk.Tk()
     root.title("Health Database GUI")
 
-    top_label = ttk.Label(root, text="Blood Donor Database")
-
-    top_label.grid(column=0, row=0, columnspan=2)
+    top_label = ttk.Label(root, text="ECG Database")
+    top_label.grid(column=3, row=0, columnspan=1)
 
     ttk.Label(root, text="Name").grid(column=0, row=1, sticky="e")
-
     name_data = tk.StringVar()
-
-    name_entry_box = ttk.Entry(root, width=50, textvariable=name_data)
-
+    name_entry_box = ttk.Entry(root, width=30, textvariable=name_data)
     name_entry_box.grid(column=1, row=1, columnspan=2, sticky="w")
 
     ttk.Label(root, text="ID").grid(column=0, row=2)
-
     id_data = tk.StringVar()
-
     id_entry_box = ttk.Entry(root, width=10, textvariable=id_data)
-
     id_entry_box.grid(column=1, row=2, columnspan=2, sticky="w")
 
-    blood_letter_data = tk.StringVar()
-    blood_letter_data.set('AB')
-    ttk.Radiobutton(root, text="A", variable=blood_letter_data,
-
-                    value="A").grid(column=0, row=3, sticky=tk.W)
-
-    ttk.Radiobutton(root, text="B", variable=blood_letter_data,
-
-                    value="B").grid(column=0, row=4, sticky=tk.W)
-
-    ttk.Radiobutton(root, text="AB", variable=blood_letter_data,
-
-                    value="AB").grid(column=0, row=5, sticky=tk.W)
-
-    ttk.Radiobutton(root, text="O", variable=blood_letter_data,
-
-                    value="O").grid(column=0, row=6, sticky=tk.W)
-
-    rh_data = tk.StringVar()
-    rh_data.set('-')
-    rh_checkbox = ttk.Checkbutton(root, text="Rh Positive",
-                                  variable=rh_data, onvalue="+", offvalue="-")
-
-    rh_checkbox.grid(column=1, row=4)
-
-    ttk.Label(root, text="Nearest Donation Center").grid(column=3, row=0)
-
-    donation_center_data = tk.StringVar()
-    combo_box = ttk.Combobox(root, textvariable=donation_center_data)
-    combo_box.grid(column=3, row=1)
+    ttk.Label(root, text="Data File").grid(column=4, row=1, sticky="e")
+    csv_file = tk.StringVar()
+    csv_file.set(os.getcwd())
+    id_entry_box = ttk.Entry(root, width=23, textvariable=csv_file)
+    id_entry_box.grid(column=5, row=1)
 
     ok_button = ttk.Button(root, text="Ok", command=ok_button_cmd)
-
     ok_button.grid(column=1, row=6)
 
     cancel_button = ttk.Button(root, text="Cancel", command=cancel_cmd)
-
     cancel_button.grid(column=2, row=6)
+
+    browse_button = ttk.Button(root, text="Browse", command=browse_files)
+    browse_button.grid(column=6, row=1)
+    img_grid = tk.Label(root, image=tk.PhotoImage(data=""))
+    img_grid.grid(column=1, row=4, columnspan=6)
 
     root.mainloop()
 
 
-if __name__ == "__main__":  # TODO: make the main shorter or put in a function
-    design_window()
-    folder = "test_data"
-    filename = os.path.join(folder, "test_data1.csv")
+def main(filename: PathLike):
     pre_data = preprocess_data(filename, raw_max=300, l_freq=1, h_freq=50,
                                phase="zero-double", fir_window="hann",
                                fir_design="firwin")
 
     img_file = "temp.jpg"
-    data_to_fig(pre_data, img_file)
+    data_to_fig(img_file)
     b64_str = image_to_b64(img_file)
     os.remove(img_file)
 
@@ -140,3 +119,7 @@ if __name__ == "__main__":  # TODO: make the main shorter or put in a function
     r = requests.post(server + "/new_patient", json=patient1)
     print(r.status_code)
     print(r.text)
+
+
+if __name__ == "__main__":
+    design_window()

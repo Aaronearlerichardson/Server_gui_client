@@ -8,5 +8,5 @@ numpy
 mne
 scipy
 matplotlib
-testfixtures
 neurokit2
+pillow
