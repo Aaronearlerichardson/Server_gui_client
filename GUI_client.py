@@ -12,7 +12,6 @@ from tkinter import ttk, filedialog
 import tkinter as tk
 from PIL import Image, ImageTk
 from pandas import DataFrame
-from typing import Tuple
 
 server = "http://127.0.0.1:5000"
 PathLike = TypeVar("PathLike", str, bytes, os.PathLike)
@@ -39,7 +38,7 @@ def photometrics_from_csv(file_name: PathLike) -> Tuple[PhotoImage, dict]:
                            fir_design="firwin")
     i_file = "temp.jpg"
     data_to_fig(data, i_file)
-    metrics = get_metrics(data)
+    metrics = get_metrics(data, rounding=4)
     image = Image.open(i_file)
     photo = ImageTk.PhotoImage(image)
     os.remove(i_file)
