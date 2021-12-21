@@ -7,8 +7,6 @@ test_file = os.path.join("test_data", "test_data1.csv")
 with open(os.path.join("tests", "b64.txt"), "r") as fobj:
     txt = fobj.read()
 
-# TODO: fix gui testing and add create output test
-
 
 def test_im_to_b64():
     from GUI_client import image_to_b64
