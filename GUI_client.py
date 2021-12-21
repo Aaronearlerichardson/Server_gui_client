@@ -5,12 +5,16 @@ import tkinter as tk
 from tkinter import ttk, filedialog
 from typing import TypeVar, Tuple, Union
 
-import matplotlib.pyplot as plt
 import requests
 from pandas import DataFrame
 
 from calculations import get_metrics
 from ecg_reader import preprocess_data
+
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
 
 server = "http://127.0.0.1:5000"
 PathLike = TypeVar("PathLike", str, bytes, os.PathLike)
