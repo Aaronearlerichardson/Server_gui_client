@@ -41,6 +41,24 @@ def test_photometrics():
     assert not os.path.isfile("temp.png")
 
 
+def test_photometrics_2():
+    from GUI_client import photometrics_from_csv
+    ans_photo_data, ans_metrics = photometrics_from_csv(test_file)
+    for key, value in ans_metrics.items():
+        if isinstance(value, tuple):
+            ans_metrics[key] = list(value)
+    with open(os.path.join("tests", "test_data1.json"), "r") as jobj:
+        expected_metrics = json.load(jobj)
+    expected_metrics["filename"] = os.path.basename(test_file)
+    ans_photo = tk.PhotoImage(data=ans_photo_data)
+    expected_photo = tk.PhotoImage(file=os.path.join("tests", "image.png"))
+    assert isinstance(ans_photo, tk.PhotoImage)
+    assert (ans_photo.width(), ans_photo.height()) == (
+        expected_photo.width(), expected_photo.height())
+    assert ans_metrics == expected_metrics
+    assert not os.path.isfile("temp.png")
+
+
 @pytest.mark.parametrize("pid, name, image, hr, expected", [
     ("201", "", "", "", {"patient_id": "201"}),
     ("", "", "", "", False),
