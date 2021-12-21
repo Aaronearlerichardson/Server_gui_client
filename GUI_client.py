@@ -1,7 +1,6 @@
 import base64
 import json
 import os
-import re
 import tkinter as tk
 from tkinter import ttk, filedialog
 from typing import TypeVar, Tuple, Union
@@ -44,11 +43,21 @@ def photometrics_from_csv(file_name: PathLike) -> Tuple[str, dict]:
     return b64_img, metrics
 
 
-def create_output(patient_id: str = None,
-                  patient_name: str = None,
-                  image: str = None,
-                  hr: str = None) -> Union[dict, bool]:
-    if patient_id is None:
+def img_from_html(html_str: str) -> str:
+    from re import search
+    match_obj = search('data:image/png;base64,([^\']+)', html_str)
+    if match_obj:
+        match = match_obj.group(1)
+        return match
+    else:
+        return ""
+
+
+def create_output(patient_id: str,
+                  patient_name: str,
+                  image: str,
+                  hr: str) -> Union[dict, bool]:
+    if patient_id == "":
         return False
     my_vars = locals()
     output = dict()
@@ -70,15 +79,15 @@ def design_window():
 
         # call external fnx to do work that can be tested
         patient = create_output(my_id, name, b64_img, hr)
-        if patient is not False:
+        if patient is False:
+            print_to_gui("patient ID is a required field")
+        else:
             # send data to the server
             r = requests.post(server + "/new_patient", json=patient)
             response_dict = json.loads(r.text)
             if "image" in response_dict.keys():
                 response_dict.pop("image")
             print_to_gui(response_dict)
-        else:
-            print_to_gui("patient ID is a required field")
 
     def cancel_cmd():
         root.destroy()
@@ -108,18 +117,23 @@ def design_window():
         combo_box['values'] = cache
 
     def retrieve_file():
+        if patient_mrn.get() == "":
+            print_to_gui("Patient MRN is required")
+            return
         dat = requests.get(server + "/get/{}".format(patient_mrn.get()))
         data = json.loads(dat.text)
         id_data.set(data["patient_id"])
         if "patient_name" in data.keys():
             name_data.set(data["patient_name"])
+        else:
+            name_data.set("")
         if "hr" in data.keys():
             heart_rate.set(data["hr"])
             img_label.config(
                 text="Heart Rate: {} (bpm)".format(heart_rate.get()))
             r = requests.get(
                 server + "/get/{}/image".format(patient_mrn.get()))
-            img = re.search('data:image/png;base64,([^\']+)', r.text).group(1)
+            img = img_from_html(r.text)
             img_str.set(img)
             photo = tk.PhotoImage(data=img)
             img_grid.config(image=photo)
@@ -134,29 +148,29 @@ def design_window():
     root.title("Health Database GUI")
 
     top_label = ttk.Label(root, text="ECG Database")
-    top_label.grid(column=3, row=0, columnspan=1)
+    top_label.grid(column=3, row=0, columnspan=2)
 
     ttk.Label(root, text="Name").grid(column=0, row=1, sticky="e")
     name_data = tk.StringVar()
     name_entry_box = ttk.Entry(root, width=30, textvariable=name_data)
     name_entry_box.grid(column=1, row=1, columnspan=2, sticky="w")
 
-    ttk.Label(root, text="ID").grid(column=0, row=2)
+    ttk.Label(root, text="ID").grid(column=0, row=2, sticky="e")
     id_data = tk.StringVar()
-    id_entry_box = ttk.Entry(root, width=10, textvariable=id_data)
+    id_entry_box = ttk.Entry(root, width=30, textvariable=id_data)
     id_entry_box.grid(column=1, row=2, columnspan=2, sticky="w")
 
     ttk.Label(root, text="Local File").grid(column=4, row=1, sticky="e")
     csv_file = tk.StringVar()
     csv_file.set(os.getcwd())
-    id_entry_box = ttk.Entry(root, width=23, textvariable=csv_file)
-    id_entry_box.grid(column=5, row=1)
+    file_entry_box = ttk.Entry(root, width=23, textvariable=csv_file)
+    file_entry_box.grid(column=5, row=1, sticky="w")
 
     ttk.Label(root, text="Server File").grid(column=4, row=2, sticky="e")
     patient_mrn = tk.StringVar()
     combo_box = ttk.Combobox(root, textvariable=patient_mrn,
                              postcommand=query_files)
-    combo_box.grid(column=5, row=2)
+    combo_box.grid(column=5, row=2, sticky="w")
 
     send_button = ttk.Button(root, text="Send", command=send_button_cmd)
     send_button.grid(column=1, row=6)
@@ -172,7 +186,7 @@ def design_window():
 
     img_str = tk.StringVar()
     img_grid = tk.Label(root, image=tk.PhotoImage(data=img_str.get()))
-    img_grid.grid(column=1, row=4, columnspan=6)
+    img_grid.grid(column=1, row=4, columnspan=5)
 
     heart_rate = tk.StringVar()
     img_label = ttk.Label(root, text="")

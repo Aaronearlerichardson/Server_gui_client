@@ -43,9 +43,9 @@ def test_photometrics():
 
 
 @pytest.mark.parametrize("pid, name, image, hr, expected", [
-    ("201", None, None, None, {"patient_id": "201"}),
-    (None, None, None, None, False),
-    (None, "Ann", "image", "72", False),
+    ("201", "", "", "", {"patient_id": "201"}),
+    ("", "", "", "", False),
+    ("", "Ann", "image", "72", False),
     ("201", "Ann", "image", "72", {"patient_id": "201", "patient_name": "Ann",
                                    "image": ["image"], "hr": "72"})
 ])
@@ -53,3 +53,14 @@ def test_create_out(pid, name, image, hr, expected):
     from GUI_client import create_output
     answer = create_output(pid, name, image, hr)
     assert answer == expected
+
+
+def test_html_search():
+    from server import render_image, app
+    from GUI_client import img_from_html
+    with app.app_context():
+        my_html = render_image(txt, "Ann")
+    answer = img_from_html(my_html)
+    assert answer == txt
+    bad_answer = img_from_html("")
+    assert bad_answer == ""
