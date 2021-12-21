@@ -25,6 +25,7 @@ def test_data_to_fig():
 
 
 def test_photometrics():
+    root = tk.Tk()  # create dummy window for linux tests
     from GUI_client import photometrics_from_csv
     ans_photo_data, ans_metrics = photometrics_from_csv(test_file)
     for key, value in ans_metrics.items():
