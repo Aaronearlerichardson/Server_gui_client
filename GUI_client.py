@@ -11,9 +11,7 @@ from pandas import DataFrame
 from calculations import get_metrics
 from ecg_reader import preprocess_data
 
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
 
 
 server = "http://127.0.0.1:5000"
@@ -29,10 +27,10 @@ def image_to_b64(img_file: PathLike = "temp.png") -> str:
 
 
 def data_to_fig(data: DataFrame, img_file: PathLike = "temp.png"):
-    plt.ioff()
-    plt.plot(data["time"], data["voltage"])
-    plt.savefig(img_file)
-    plt.close()
+    fig = Figure()
+    ax = fig.subplots()
+    ax.plot(data["time"], data["voltage"])
+    fig.savefig(img_file)
 
 
 def photometrics_from_csv(file_name: PathLike) -> Tuple[str, dict]:
