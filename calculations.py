@@ -1,10 +1,10 @@
+import json
 import logging
 import os
-import json
 
 import matplotlib.pyplot as plt
-from pandas import DataFrame
 from neurokit2 import ecg_peaks
+from pandas import DataFrame
 
 import ecg_reader as erd
 

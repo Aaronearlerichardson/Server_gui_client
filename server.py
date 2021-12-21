@@ -1,8 +1,10 @@
-from flask import Flask, request, render_template_string
-from typing import Union, Dict, Tuple, TypedDict
-from ecg_reader import is_num
-from database import Database
 from datetime import datetime
+from typing import Union, Dict, Tuple, TypedDict
+
+from flask import Flask, request, render_template_string
+
+from database import Database
+from ecg_reader import is_num
 
 app = Flask(__name__)
 db_keys = {"patient_id": int, "patient_name": str, "hr": float, "image": list}

@@ -1,30 +1,31 @@
-import requests
-import os
-
-from ecg_reader import preprocess_data
-from calculations import get_metrics
 import base64
-import matplotlib.pyplot as plt
-from typing import TypeVar, Tuple
-from tkinter import ttk, filedialog
-import tkinter as tk
-from pandas import DataFrame
 import json
+import os
 import re
+import tkinter as tk
+from tkinter import ttk, filedialog
+from typing import TypeVar, Tuple, Union
+
+import matplotlib.pyplot as plt
+import requests
+from pandas import DataFrame
+
+from calculations import get_metrics
+from ecg_reader import preprocess_data
 
 server = "http://127.0.0.1:5000"
 PathLike = TypeVar("PathLike", str, bytes, os.PathLike)
 i_file = "temp.png"
 
 
-def image_to_b64(img_file: PathLike = "temp.jpg") -> str:
+def image_to_b64(img_file: PathLike = "temp.png") -> str:
     with open(img_file, "rb") as image_file:
         b64_bytes = base64.b64encode(image_file.read())
     b64_string = str(b64_bytes, encoding="utf-8")
     return b64_string
 
 
-def data_to_fig(data: DataFrame, img_file: PathLike = "temp.jpg"):
+def data_to_fig(data: DataFrame, img_file: PathLike = "temp.png"):
     plt.ioff()
     plt.plot(data["time"], data["voltage"])
     plt.savefig(img_file)
@@ -43,10 +44,12 @@ def photometrics_from_csv(file_name: PathLike) -> Tuple[str, dict]:
     return b64_img, metrics
 
 
-def create_output(patient_id: str,
+def create_output(patient_id: str = None,
                   patient_name: str = None,
                   image: str = None,
-                  hr: str = None) -> dict:
+                  hr: str = None) -> Union[dict, bool]:
+    if patient_id is None:
+        return False
     my_vars = locals()
     output = dict()
     for key, value in my_vars.items():
@@ -65,13 +68,14 @@ def design_window():
         b64_img = img_str.get()
         hr = heart_rate.get()
 
-        if my_id:
-            # call external fnx to do work that can be tested
-            patient = create_output(my_id, name, b64_img, hr)
+        # call external fnx to do work that can be tested
+        patient = create_output(my_id, name, b64_img, hr)
+        if patient is not False:
             # send data to the server
             r = requests.post(server + "/new_patient", json=patient)
             response_dict = json.loads(r.text)
-            response_dict.pop("image")
+            if "image" in response_dict.keys():
+                response_dict.pop("image")
             print_to_gui(response_dict)
         else:
             print_to_gui("patient ID is a required field")
@@ -104,17 +108,27 @@ def design_window():
         combo_box['values'] = cache
 
     def retrieve_file():
-        r = requests.get(server + "/get/{}/image".format(patient_mrn.get()))
-        img = re.search('data:image/png;base64,([^\']+)', r.text).group(1)
-        photo = tk.PhotoImage(data=img)
-        img_grid.config(image=photo)
-        img_grid.image_ref = photo  # keep as a reference
         dat = requests.get(server + "/get/{}".format(patient_mrn.get()))
         data = json.loads(dat.text)
-        heart_rate.set(data["hr"])
-        img_label.config(text="Heart Rate: {} (bpm)".format(heart_rate.get()))
         id_data.set(data["patient_id"])
-        name_data.set(data["patient_name"])
+        if "patient_name" in data.keys():
+            name_data.set(data["patient_name"])
+        if "hr" in data.keys():
+            heart_rate.set(data["hr"])
+            img_label.config(
+                text="Heart Rate: {} (bpm)".format(heart_rate.get()))
+            r = requests.get(
+                server + "/get/{}/image".format(patient_mrn.get()))
+            img = re.search('data:image/png;base64,([^\']+)', r.text).group(1)
+            img_str.set(img)
+            photo = tk.PhotoImage(data=img)
+            img_grid.config(image=photo)
+            img_grid.image_ref = photo  # keep as a reference
+        else:
+            img_grid.image_ref = tk.PhotoImage(data="")
+            img_str.set("")
+            heart_rate.set("")
+            img_label.config(text="")
 
     root = tk.Tk()
     root.title("Health Database GUI")

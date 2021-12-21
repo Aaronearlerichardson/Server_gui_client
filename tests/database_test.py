@@ -1,4 +1,5 @@
 import pytest
+
 import database as db
 
 temp_db = db.Database()
