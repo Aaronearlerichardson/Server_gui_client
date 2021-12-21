@@ -25,6 +25,7 @@ class Database(List[dict]):
         super().__init__()
         self.Name = self.__class__.__name__
         self.Index = index
+        self.__dict__[index] = []
         for arg in args:
             self.add_entry(arg)
 

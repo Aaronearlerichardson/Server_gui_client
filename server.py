@@ -8,7 +8,7 @@ app = Flask(__name__)
 db_keys = {"patient_id": int, "patient_name": str, "hr": float, "image": list}
 db = Database(index="patient_id")
 t_format = "%m-%d-%Y %H:%M:%S"
-db_entry = TypedDict("db_entry", db_keys)
+db_entry = TypedDict("db_entry", **db_keys)
 
 
 @app.route("/", methods=["GET"])
@@ -65,8 +65,16 @@ def new_patient():
     if status_code != 200:
         return error_msg, status_code
     data: db_entry
-    db.add_entry(data, time=datetime.now().strftime(t_format))
-    return "Added patient {}".format(data["patient_id"]), 200
+    added = db.add_entry(data, time=datetime.now().strftime(t_format))
+    return added, 200
+
+
+@app.route("/get", methods=["GET"])
+def get_all():
+    all_dict = dict()
+    for mrn in db.patient_id:
+        all_dict[mrn] = db.search(patient_id=mrn)
+    return all_dict, 200
 
 
 @app.route("/get/<name_or_mrn>", methods=["GET"])

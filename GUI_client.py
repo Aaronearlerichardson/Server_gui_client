@@ -9,6 +9,8 @@ from typing import TypeVar, Tuple
 from tkinter import ttk, filedialog
 import tkinter as tk
 from pandas import DataFrame
+import json
+import re
 
 server = "http://127.0.0.1:5000"
 PathLike = TypeVar("PathLike", str, bytes, os.PathLike)
@@ -49,12 +51,14 @@ def create_output(patient_id: str,
     output = dict()
     for key, value in my_vars.items():
         if value:
-            output[key] = value
+            if key == "image":
+                output[key] = [value]
+            else:
+                output[key] = value
     return output
 
 
 def design_window():
-    # TODO: make dropdown list that accesses all patient data from server
     def send_button_cmd():
         name = name_data.get()
         my_id = id_data.get()
@@ -66,8 +70,9 @@ def design_window():
             patient = create_output(my_id, name, b64_img, hr)
             # send data to the server
             r = requests.post(server + "/new_patient", json=patient)
-            print_to_gui(r.text)
-            print(r.status_code)
+            response_dict = json.loads(r.text)
+            response_dict.pop("image")
+            print_to_gui(response_dict)
         else:
             print_to_gui("patient ID is a required field")
 
@@ -90,6 +95,27 @@ def design_window():
     def print_to_gui(msg: str):
         msg_label.config(text=msg)
 
+    def query_files():
+        r = requests.get(server + "/get")
+        cache = list()
+        response_dict = json.loads(r.text)
+        for row in response_dict.values():
+            cache.append(row["patient_id"])
+        combo_box['values'] = cache
+
+    def retrieve_file():
+        r = requests.get(server + "/get/{}/image".format(patient_mrn.get()))
+        img = re.search('data:image/png;base64,([^\']+)', r.text).group(1)
+        photo = tk.PhotoImage(data=img)
+        img_grid.config(image=photo)
+        img_grid.image_ref = photo  # keep as a reference
+        dat = requests.get(server + "/get/{}".format(patient_mrn.get()))
+        data = json.loads(dat.text)
+        heart_rate.set(data["hr"])
+        img_label.config(text="Heart Rate: {} (bpm)".format(heart_rate.get()))
+        id_data.set(data["patient_id"])
+        name_data.set(data["patient_name"])
+
     root = tk.Tk()
     root.title("Health Database GUI")
 
@@ -106,20 +132,29 @@ def design_window():
     id_entry_box = ttk.Entry(root, width=10, textvariable=id_data)
     id_entry_box.grid(column=1, row=2, columnspan=2, sticky="w")
 
-    ttk.Label(root, text="Data File").grid(column=4, row=1, sticky="e")
+    ttk.Label(root, text="Local File").grid(column=4, row=1, sticky="e")
     csv_file = tk.StringVar()
     csv_file.set(os.getcwd())
     id_entry_box = ttk.Entry(root, width=23, textvariable=csv_file)
     id_entry_box.grid(column=5, row=1)
 
+    ttk.Label(root, text="Server File").grid(column=4, row=2, sticky="e")
+    patient_mrn = tk.StringVar()
+    combo_box = ttk.Combobox(root, textvariable=patient_mrn,
+                             postcommand=query_files)
+    combo_box.grid(column=5, row=2)
+
     send_button = ttk.Button(root, text="Send", command=send_button_cmd)
     send_button.grid(column=1, row=6)
 
     cancel_button = ttk.Button(root, text="Cancel", command=cancel_cmd)
-    cancel_button.grid(column=6, row=6)
+    cancel_button.grid(column=5, row=6)
 
     browse_button = ttk.Button(root, text="Browse", command=browse_files)
     browse_button.grid(column=6, row=1)
+
+    retr_button = ttk.Button(root, text="Retrieve", command=retrieve_file)
+    retr_button.grid(column=6, row=2)
 
     img_str = tk.StringVar()
     img_grid = tk.Label(root, image=tk.PhotoImage(data=img_str.get()))
