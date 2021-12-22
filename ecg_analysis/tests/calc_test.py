@@ -2,8 +2,8 @@ import pytest
 from pandas import DataFrame
 from testfixtures import LogCapture
 
-import calculations as calc
-from tests.reader_test import ecg, t
+from ecg_analysis import calculations as calc
+from ecg_analysis.tests.reader_test import ecg, t
 
 ecg_df = DataFrame().from_dict({"time": t.tolist(),
                                 "voltage": ecg[0].tolist()})

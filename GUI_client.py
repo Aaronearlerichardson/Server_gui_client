@@ -9,8 +9,8 @@ import requests
 from matplotlib.figure import Figure
 from pandas import DataFrame
 
-from calculations import get_metrics
-from ecg_reader import preprocess_data
+from ecg_analysis.calculations import get_metrics
+from ecg_analysis.ecg_reader import preprocess_data
 from server import db
 
 server = "http://vcm-23126.vm.duke.edu:5000"
