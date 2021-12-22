@@ -11,6 +11,7 @@ from pandas import DataFrame
 
 from calculations import get_metrics
 from ecg_reader import preprocess_data
+from server import db
 
 server = "http://vcm-23126.vm.duke.edu:5000"
 PathLike = TypeVar("PathLike", str, bytes, os.PathLike)
@@ -57,9 +58,9 @@ def create_output(patient_id: str,
                   patient_name: str,
                   image: str,
                   hr: str) -> Union[dict, bool]:
-    if patient_id == "":
-        return False
     my_vars = locals()
+    if my_vars[db.Index] == "":
+        return False
     output = dict()
     for key, value in my_vars.items():
         if value:
