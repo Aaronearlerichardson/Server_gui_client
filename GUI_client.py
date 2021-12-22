@@ -19,12 +19,16 @@ i_file = "temp.png"
 
 
 def image_to_b64(img_file: PathLike = "temp.png") -> str:
-    """
+    """function that converts an image file to a base64 encoded string
 
-    :param img_file:
-    :type img_file:
-    :return:
-    :rtype:
+    This function takes a file path to an image (default value 'temp.png') and
+    converts that image to a base 64 encoded string. The encoding protocol of
+    the string is utf-8. The file object is read as bytes into the string.
+
+    :param img_file: Path to the image file, default value is 'temp.png'
+    :type img_file: Pathlike
+    :return: Base 64 string of the image file
+    :rtype: str
     """
     with open(img_file, "rb") as image_file:
         b64_bytes = base64.b64encode(image_file.read())
@@ -33,6 +37,21 @@ def image_to_b64(img_file: PathLike = "temp.png") -> str:
 
 
 def data_to_fig(data: DataFrame, img_file: PathLike = "temp.png"):
+    """function that saves a matplotlib figure from a two column DataFrame
+
+    This function takes a Pandas Dataframe with the columns 'time' and
+    'voltage' as well as the name of the image file to write the plot to. It
+    takes this data and saves the figure to the indicated image file. It favors
+    usage of the matplotlib figure object over pyplot due to issues with
+    backend and tkinter when using pyplot.
+
+    source: https://stackoverflow.com/questions/37604289
+
+    :param data: DataFrame with columns "time" and "voltage"
+    :type data: DataFrame
+    :param img_file: Path string for intended file to write the figure image to
+    :type img_file: Pathlike
+    """
     fig = Figure()
     ax = fig.subplots()
     ax.plot(data["time"], data["voltage"])
@@ -40,6 +59,21 @@ def data_to_fig(data: DataFrame, img_file: PathLike = "temp.png"):
 
 
 def photometrics_from_csv(file_name: PathLike) -> Tuple[str, dict]:
+    """Takes a csv ecg file and converts it to a b64 string and heart metrics
+
+    This function takes a csv file with two columns and preprocesses that file,
+    assigning those columns to either the 'time' or 'voltage' column in a
+    DataFrame. That DataFrame is then converted to matplotlib figure which is
+    converted to a b64 string image and a series of relevant metrics for ECGs.
+    The figure conversion step creates a temporary 'temp.png' file which the
+    img_to_b64 function uses to generate the b64 string. After this is
+    accomplished, the temporary file is deleted.
+
+    :param file_name: The file path of the csv data file to be preprocessed
+    :type file_name: Pathlike
+    :return: The b64 image and relevant heart rhythm metrics
+    :rtype: Tuple[str, dict]
+    """
     assert file_name.endswith(".csv")
     data = preprocess_data(file_name, raw_max=300, l_freq=1, h_freq=50,
                            phase="zero-double", fir_window="hann",
@@ -52,6 +86,17 @@ def photometrics_from_csv(file_name: PathLike) -> Tuple[str, dict]:
 
 
 def img_from_html(html_str: str) -> str:
+    """Scrubs the string of a html page for the b64 string of in image
+
+    This function uses regex to scan the html template described in the render
+    image function. It scans this template for the base 64 string encoded png
+    image and extracts it from the template. This string is then returned.
+
+    :param html_str: The string of the html page to be searched
+    :type html_str: str
+    :return: The Base 64 string of the png image
+    :rtype: str
+    """
     from re import search
     match_obj = search('data:image/png;base64,([^\']+)', html_str)
     if match_obj:
@@ -65,6 +110,30 @@ def create_output(patient_id: str,
                   patient_name: str,
                   image: str,
                   hr: str) -> Union[dict, bool]:
+    """Takes the inputs and converts it to a POST request format
+
+    This function takes the patient_id, patient_name, image, and heart rate
+    (hr) and inserts them into a dictionary to be sent in a POST request to the
+    server. All inputs are required, but because the inputs are tkinter
+    StringVars, any 'missing' inputs will be read in as empty strings. If the
+    parameter indicated to be the index is an empty string, this function
+    returns False. Any other parameter that is an empty string will just not be
+    added to the POST request. If the parameter 'image' is not empty, that is
+    inserted into a list before it is added to the dictionary.
+
+    :param patient_id: The MRN of the patient
+    :type patient_id: str
+    :param patient_name: The name of the patient
+    :type patient_name: str
+    :param image: The patient's ECG image, encoded as a base 64 string
+    :type image: str
+    :param hr: The calculated average heart rate of the patient, calculated
+        from the ECG image
+    :type hr: str
+    :return: A POST request compatible dictionary with keys matching the
+        parameter names
+    :rtype: dict
+    """
     my_vars = locals()
     if my_vars[db.Index] == "":
         return False
