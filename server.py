@@ -80,9 +80,9 @@ def get_all():
     :rtype: Tuple[dict, int]
     """
     all_dict = dict()
-    if "patient_id" in db.__dict__.keys():
-        for mrn in db.patient_id:
-            all_dict[mrn] = db.search(patient_id=mrn)
+    if db.Index in db.__dict__.keys():
+        for item in db.__dict__[db.Index]:
+            all_dict[item] = db.search(**{db.Index: item})
     return all_dict, 200
 
 
