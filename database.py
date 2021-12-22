@@ -17,7 +17,9 @@ class Database(List[dict]):
 
         Initializes the Database class by calling the list __init__, setting
         the name attribute to the class name, and looping through the given
-        dictionaries to append them to the database.
+        dictionaries to append them to the database. Contains an optionally
+        indicated 'index' input which will be stored as the only required key
+        for future input data.
 
         :param args: dictionaries to add to the database
         :type args: dict
@@ -35,7 +37,10 @@ class Database(List[dict]):
         Wrapper for the append method with the added effect of appending to the
         attributes and returning the added dictionary for validation. Key word
         arguments may be added to add a key to the dictionary before appending
-        it. This will be both appended and returned.
+        it. This will be both appended and returned. Any data added that
+        contains an index key that is already in the database will overwrite
+        the previous database item. If the item to be overwritten is a list,
+        the default behavior is to append to that list instead of deleting it.
 
         :param entry: Dictionary to be appended to the database
         :type entry: dict

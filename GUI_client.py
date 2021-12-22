@@ -19,6 +19,13 @@ i_file = "temp.png"
 
 
 def image_to_b64(img_file: PathLike = "temp.png") -> str:
+    """
+
+    :param img_file:
+    :type img_file:
+    :return:
+    :rtype:
+    """
     with open(img_file, "rb") as image_file:
         b64_bytes = base64.b64encode(image_file.read())
     b64_string = str(b64_bytes, encoding="utf-8")
