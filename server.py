@@ -71,9 +71,9 @@ def get_all():
     This function is a GET request that when the address
     http://vcm-23126.vm.duke.edu/get is inputted online, returns a
     jsonified string that states all the data contained in the database defined
-    in database.py. The jsonified string, when parsed, is a dictionary with MRN
-    numbers as keys and all data associated with those MRNs as values. If the
-    database is empty, returns an empty dict.
+    in database.py. The jsonified string, when parsed, is a dictionary with
+    index values as keys and all data associated with those MRNs as values. If
+    the database is empty, returns an empty dict.
 
 
     :return: Dictionary with mrns as keys and data as values
