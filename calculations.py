@@ -1,10 +1,9 @@
+import json
 import logging
 import os
-import json
 
-import matplotlib.pyplot as plt
-from pandas import DataFrame
 from neurokit2 import ecg_peaks
+from pandas import DataFrame
 
 import ecg_reader as erd
 
@@ -99,6 +98,7 @@ def remove_dir(directory: str):
 
 
 if __name__ == "__main__":
+    import matplotlib.pyplot as plt
 
     # set logging parameters
     if os.path.isfile("info.log"):

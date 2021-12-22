@@ -25,6 +25,7 @@ class Database(List[dict]):
         super().__init__()
         self.Name = self.__class__.__name__
         self.Index = index
+        self.__dict__[index] = []
         for arg in args:
             self.add_entry(arg)
 
@@ -108,12 +109,12 @@ class Database(List[dict]):
                     continue
                 elif item[key] == value:
                     if get in ["latest", "first"]:
-                        return item
+                        return item.copy()
                     elif get == "all":
                         getvals.append(item)
 
         if get == "all" and getvals:
-            return self.__class__(*getvals)
+            return self.__class__(*getvals).copy()
         else:
             raise IndexError(
                 "No {} with the value {} found in {} database".format(

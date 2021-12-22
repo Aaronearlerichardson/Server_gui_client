@@ -3,8 +3,8 @@ import os
 from typing import Tuple, Union, List, Any
 
 import numpy as np
-from pandas import DataFrame, Series, read_csv
 from mne import filter, set_log_file
+from pandas import DataFrame, Series, read_csv
 
 
 def load_csv(local_file: str,

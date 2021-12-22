@@ -1,12 +1,16 @@
+from datetime import datetime
+from typing import Union, Dict, Tuple, TypedDict
+
 from flask import Flask, request, render_template_string
-from typing import Union, Dict, Tuple
-from ecg_reader import is_num
+
 from database import Database
+from ecg_reader import is_num
 
 app = Flask(__name__)
-db_keys = {"patient_id": int, "patient_name": str, "hr": float,
-           "image": list}
-db = Database()
+db_keys = {"patient_id": int, "patient_name": str, "hr": float, "image": list}
+db = Database(index="patient_id")
+t_format = "%m-%d-%Y %H:%M:%S"
+db_entry = TypedDict("db_entry", **db_keys)
 
 
 @app.route("/", methods=["GET"])
@@ -25,7 +29,7 @@ def get_status():  # no test needed!
 
 
 @app.route("/new_patient", methods=["POST"])
-def new_patient():  # no test needed!
+def new_patient():
     """This applies the new_patient route to post
     new patient information to a dictionary.
 
@@ -56,17 +60,23 @@ def new_patient():  # no test needed!
     and patient_age; string + error code or string + completion code
     """
     data = request.get_json()
-    data["patient_id"] = try_intify(data["patient_id"])
-    data["hr"] = try_floatify(data["hr"])
-    for key, i in data.items():
-        if i is False:
-            return "key {} is not convertable to an integer".format(key), 400
-    error_str, status_code = validate_input(data, db_keys)
-    if error_str is not True:
-        return error_str, status_code
-    data: Dict[str, Union[int, str, float]]
-    db.add_entry(data)
-    return "Added patient {}".format(data["patient_id"]), 200
+    data = correct_input(data, db_keys)
+    if not isinstance(data, dict):
+        return data, 400
+    error_msg, status_code = validate_input(data, db_keys)
+    if status_code != 200:
+        return error_msg, status_code
+    data: db_entry
+    added = db.add_entry(data, time=datetime.now().strftime(t_format))
+    return added, 200
+
+
+@app.route("/get", methods=["GET"])
+def get_all():
+    all_dict = dict()
+    for mrn in db.patient_id:
+        all_dict[mrn] = db.search(patient_id=mrn)
+    return all_dict, 200
 
 
 @app.route("/get/<name_or_mrn>", methods=["GET"])
@@ -74,7 +84,8 @@ def get_data(name_or_mrn: str) -> Tuple[Union[dict, str], int]:
     try:
         mrn = try_intify(name_or_mrn)
         match = db.search(patient_id=mrn, patient_name=name_or_mrn)
-        del match["image"]
+        if "image" in match.keys():
+            del match["image"]
         return match, 200
     except IndexError as e:
         return str(e), 405
@@ -87,15 +98,21 @@ def get_image(name_or_mrn: str) -> Tuple[str, int]:
         data = db.search(patient_id=mrn, patient_name=name_or_mrn)
     except IndexError as e:
         return str(e), 405
+    if "image" not in data.keys():
+        return "No image was uploaded for ID {}".format(
+            data["patient_id"]), 405
     b64_img = data["image"][-1]
-    name = data["patient_name"]
+    if "patient_name" in data.keys():
+        name = data["patient_name"]
+    else:
+        name = ""
     page = render_image(b64_img, name)
     return page, 200
 
 
 def render_image(b64_img: str, name: str) -> str:
     template_string = """<h1>{{ my_title }}<h1>
-    <img src='data:image/jpeg;base64,{{ img_data }}'
+    <img src='data:image/png;base64,{{ img_data }}'
         alt='img_data'  id='imgslot'/>"""
     page = render_template_string(template_string,
                                   my_title=name,
@@ -176,20 +193,39 @@ def validate_input(in_data: dict,  # TESTED
     :param in_data: dictionary of data
     :param expected: dictionary data key types expectations (tuple)
 
-    :returns: String and 400 error (not dicionary, missing key, and
+    :returns: String and 400 error (not dictionary, missing key, and
     wrong  dictionary value type) or True + 200 code.
     """
     if not isinstance(in_data, dict):
         return "The input was not a dictionary.", 400
     for key, value in expected.items():
         if key not in in_data.keys():
-            return "the key {} is missing from the input".format(key), 400
+            continue
         elif not isinstance(in_data[key], value):
-            return "the key '{}' is a {}," \
-                   " should be {}".format(key, type(in_data[key]),
-                                          expected[key]), 400
+            return "the key '{}' is a {}, should be {}".format(
+                key, type(in_data[key]), expected[key]), 400
     return True, 200
 
 
+def correct_input(in_data: dict, expected: dict) -> Union[dict, str]:
+    out_data = dict()
+    for key, val in in_data.items():
+        if expected[key] is int:
+            i = try_intify(val)
+            if i is False:
+                return "key {} is not convertable to an integer".format(key)
+            else:
+                out_data[key] = i
+        elif expected[key] is float:
+            i = try_floatify(val)
+            if i is False:
+                return "key {} is not convertable to a float".format(key)
+            else:
+                out_data[key] = i
+        else:
+            out_data[key] = val
+    return out_data
+
+
 if __name__ == '__main__':
-    app.run()  # host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=5000)
