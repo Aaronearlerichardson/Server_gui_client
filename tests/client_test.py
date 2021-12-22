@@ -1,6 +1,5 @@
 import json
 import os
-import tkinter as tk
 
 import pytest
 
@@ -32,15 +31,9 @@ def test_photometrics():
     with open(os.path.join("tests", "test_data1.json"), "r") as jobj:
         expected_metrics = json.load(jobj)
     expected_metrics["filename"] = os.path.basename(test_file)
-    if "DISPLAY" in os.environ.keys():
-        root = tk.Tk()
-        ans_photo = tk.PhotoImage(data=ans_photo_data)
-        expected_photo = tk.PhotoImage(file=os.path.join("tests", "image.png"))
-        assert isinstance(ans_photo, tk.PhotoImage)
-        assert (ans_photo.width(), ans_photo.height()) == (
-            expected_photo.width(), expected_photo.height())
     assert ans_metrics == expected_metrics
     assert not os.path.isfile("temp.png")
+    assert ans_photo_data == txt  # ahah! compared the string instead!
 
 
 @pytest.mark.parametrize("pid, name, image, hr, expected", [
