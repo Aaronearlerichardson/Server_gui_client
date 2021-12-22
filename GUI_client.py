@@ -148,13 +148,51 @@ def create_output(patient_id: str,
 
 
 def design_window():
-    def send_button_cmd():
-        name = name_data.get()
-        my_id = id_data.get()
-        b64_img = img_str.get()
-        hr = heart_rate.get()
+    """The function which defines the shape and design of the tkinter GUI
 
-        # call external fnx to do work that can be tested
+    This function lays out and defines placement for all the elements of the
+    graphic user interface. It assigns placement via the tkinter grid
+    functionality, and assigns element functionality via embedded functions.
+    The individual gui elements include a title, top label, a name, ID, and
+    file entry box each with their own labels, a file retrieval combo box with
+    its own label, a browse button that opens the local file browser for the
+    user to select a csv file to upload, a retrieve button that takes the
+    indicated MRN from the retrieval combo box and retrieves the patient data
+    from the server via a GET request, a send button that updates the
+    information on the server side with the current information on the GUI, a
+    cancel button which closes the window, an image label which is updated by
+    either the browse or retrieve commands and has a top label which displays
+    the heart rate of the patient, and lastly a label below the image which
+    displays the server response.
+    """
+    def send_button_cmd(my_id: str, name: str, b64_img: str, hr: str):
+        """The command that send the current GUI to the server
+
+        This function is called when the 'send' button is pressed on the GUI.
+        At minimum, it requires the ID entry box to be populated. It also
+        checks the name, image, and heart rate info if they are populated and
+        sends that info to the server via a POST request. It receives the POST
+        request response from the server and prints the output to the bottom of
+        the GUI. If the patient ID is not populated, then the POST request
+        never happens and the bottom displays the text 'patient ID is a
+        required field'
+
+        :param my_id: The MRN of the patient, taken from the ID entry box
+        :type my_id: str
+        :param name: The name of the patient, taken from the name entry box
+        :type name: str
+        :param b64_img: The base 64 string of the ecg image, taken from the GUI
+            image
+        :type b64_img: str
+        :param hr: The average heart rate of the patient's ECG, taken from the
+            heart rate label in the GUI.
+        :type hr: str
+
+        :return: The database entry added to the database, or an error message
+        :rtype: Union[dict, str]
+        """
+
+        # call external function to do work that can be tested
         patient = create_output(my_id, name, b64_img, hr)
         if patient is False:
             print_to_gui("patient ID is a required field")
@@ -167,9 +205,26 @@ def design_window():
             print_to_gui(response_dict)
 
     def cancel_cmd():
+        """The command that closes the GUI
+
+        This command is activated by the cancel button, and effectively closes
+        the GUI window.
+        """
         root.destroy()
 
     def browse_files():
+        """Command that uses the host system's file explorer to find a csv file
+
+        This command is accessed by the 'Browse' button, and uses the tkinter
+        filedialog method to access the host system's file explorer, as a way
+        of selecting the csv data file you wish to load. Once selected, the
+        GUI preprocesses the data, and generates and displays a matplotlib
+        figure of the voltage and time data on the GUI. It also calculates all
+        the relevant metrics, and saves the heart rate data.
+
+        :return: The ECG image and heart rate data as a string
+        :rtype: Tuple[tk.PhotoImage, str]
+        """
         file_name = filedialog.askopenfilename(
             initialdir=csv_file.get(), title="Select a File", filetypes=(
                 ("csv files", "*.csv*"), ("all files", "*.*")))
@@ -183,9 +238,24 @@ def design_window():
         img_label.config(text="Heart Rate: {} (bpm)".format(heart_rate.get()))
 
     def print_to_gui(msg: str):
+        """Function that prints whatever message inputted to the GUI
+
+        This function take the msg_lab tkinter Label object and updates it to
+        display whatever message is given. This effectively displays the
+        message on the GUI.
+
+        :param msg: The message to display
+        :type msg: str
+        """
         msg_label.config(text=msg)
 
     def query_files():
+        """Updates the contents of the retrieve dropdown box with server MRNs
+
+        This function executes every time a new MRN is added to the server. It
+        populates the box next to the 'Retrieve' button with every MRN that
+        exists on the server.
+        """
         r = requests.get(server + "/get")
         cache = list()
         response_dict = json.loads(r.text)
@@ -193,11 +263,23 @@ def design_window():
             cache.append(row["patient_id"])
         combo_box['values'] = cache
 
-    def retrieve_file():
-        if patient_mrn.get() == "":
+    def retrieve_file(mrn: str):
+        """Retrieves patient data from the database and updates it on the GUI
+
+        Takes the mrn from the server file entry box and uses it to retrieve
+        the corresponding patient data from the server via a GET request. It
+        then updates that info to be shown on the gui, filling out entry boxes
+        and replacing images if they exist.
+
+        :param mrn: The medical record number of the patient on the server
+        :type mrn: str
+        :return: Data from the server
+        :rtype: dict
+        """
+        if mrn == "":
             print_to_gui("Patient MRN is required")
             return
-        dat = requests.get(server + "/get/{}".format(patient_mrn.get()))
+        dat = requests.get(server + "/get/{}".format(mrn))
         data = json.loads(dat.text)
         id_data.set(data["patient_id"])
         if "patient_name" in data.keys():
@@ -209,7 +291,7 @@ def design_window():
             img_label.config(
                 text="Heart Rate: {} (bpm)".format(heart_rate.get()))
             r = requests.get(
-                server + "/get/{}/image".format(patient_mrn.get()))
+                server + "/get/{}/image".format(mrn))
             img = img_from_html(r.text)
             img_str.set(img)
             photo = tk.PhotoImage(data=img)
@@ -249,7 +331,9 @@ def design_window():
                              postcommand=query_files)
     combo_box.grid(column=5, row=2, sticky="w")
 
-    send_button = ttk.Button(root, text="Send", command=send_button_cmd)
+    send_button = ttk.Button(
+        root, text="Send", command=lambda: send_button_cmd(
+            id_data.get(), name_data.get(), img_str.get(), heart_rate.get()))
     send_button.grid(column=1, row=6)
 
     cancel_button = ttk.Button(root, text="Cancel", command=cancel_cmd)
@@ -258,7 +342,8 @@ def design_window():
     browse_button = ttk.Button(root, text="Browse", command=browse_files)
     browse_button.grid(column=6, row=1)
 
-    retr_button = ttk.Button(root, text="Retrieve", command=retrieve_file)
+    retr_button = ttk.Button(root, text="Retrieve",
+                             command=lambda: retrieve_file(patient_mrn.get()))
     retr_button.grid(column=6, row=2)
 
     img_str = tk.StringVar()
