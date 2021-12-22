@@ -17,15 +17,14 @@ db_entry = TypedDict("db_entry", **db_keys)
 def get_status():  # no test needed!
     """Applies route for showing that the server is on.
 
-    This route fnx is a get request that when the address
+    This route function is a get request that when the address
     http://vcm-23126.vm.duke.edu/ is inputted online, returns a
     jsonified string that says "Server is on".
 
-    :param: N/A
-
-    :returns: json string that the server is on
+    :return: json string that the server is on
+    :rtype: Tuple[str, int]
     """
-    return "Server is on"
+    return "Server is on", 200
 
 
 @app.route("/new_patient", methods=["POST"])
@@ -38,7 +37,7 @@ def new_patient():
     jsonified string that states a dictionary of the patient_id, the
     patient_name, the heart rate as 'hr', and the time that the data was stored
     in the database. This function uses the posted dictionary of new patient
-    data and checks the id and age calling the correct input function, which
+    data and checks the id and hr calling the correct input function, which
     uses try intify and try floatify as backend. Then, the function calls the
     validate input function that checks if the input was a dictionary(if not,
     return string and 400 error), if the key specified is missing(if missing
@@ -49,10 +48,9 @@ def new_patient():
     stating that a new patient was added with the code 200.
 
 
-    :param: N/A
-
-    :return: string of dictionary that includes patient_id, patient_name, time,
+    :return: dictionary that includes patient_id, patient_name, time,
     and hr; string + error code or string + completion code
+    :rtype: Tuple[dict, int]
     """
     data = request.get_json()
     data = correct_input(data, db_keys)
@@ -79,7 +77,7 @@ def get_all():
 
 
     :return: Dictionary with mrns as keys and data as values
-    :rtype: dict
+    :rtype: Tuple[dict, int]
     """
     all_dict = dict()
     if "patient_id" in db.__dict__.keys():
@@ -93,8 +91,8 @@ def get_data(name_or_mrn: str) -> Tuple[Union[dict, str], int]:
     """Applies route for showing all data associated with name or mrn
 
     This function is a GET request that when the address
-    http://vcm-23126.vm.duke.edu/get is inputted online, returns a
-    jsonified string that states all the data contained in the database
+    http://vcm-23126.vm.duke.edu/get/<name_or_mrn> is inputted online, returns
+    a jsonified string that states all the data contained in the database
     associated with the name or MRN inputted. If there is more than one MRN
     associated with the name given, then the most recent mrn is returned, and
     other data can only be retrieved by inputting the mrn of the older data.
@@ -102,7 +100,7 @@ def get_data(name_or_mrn: str) -> Tuple[Union[dict, str], int]:
     :param name_or_mrn: name or mrn of the relevant data to be retrieved
     :type name_or_mrn: str
     :return: data associated with that name or mrn
-    :rtype: str
+    :rtype: Tuple[dict, int]
     """
     try:
         mrn = try_intify(name_or_mrn)
@@ -119,17 +117,17 @@ def get_image(name_or_mrn: str) -> Tuple[str, int]:
     """Applies route for showing image associated with the given name or mrn
 
     This function is a GET request that when the address
-    http://vcm-23126.vm.duke.edu/get is inputted online, returns an html
-    rendered string (using render_image) that shows the image and associated
-    name on a webpage associated with the name or MRN inputted. If there is
-    more than one MRN associated with the name given, then the most recent mrn
-    is returned, and other images can only be retrieved by inputting the mrn of
-    the older data.
+    http://vcm-23126.vm.duke.edu/get/<name_or_mrn>/image is inputted online,
+    returns a html rendered string (using render_image) that shows the image
+    and associated name on a webpage associated with the name or MRN inputted.
+    If there is more than one MRN associated with the name given, then the most
+    recent mrn is returned, and other images can only be retrieved by inputting
+    the mrn of the older data.
 
     :param name_or_mrn: name or mrn of the relevant data to be retrieved
     :type name_or_mrn: str
     :return: html string of rendered image and name
-    :rtype: str
+    :rtype: Tuple[str, int]
     """
     try:
         mrn = try_intify(name_or_mrn)
@@ -149,6 +147,21 @@ def get_image(name_or_mrn: str) -> Tuple[str, int]:
 
 
 def render_image(b64_img: str, name: str) -> str:
+    """Converts b64 image and patient name to a rendered html page
+
+    This function takes a b64 png image and patient name and converts it to a
+    string which can be rendered in a standard html page on a browser. It does
+    this by inserting the data into a locally stored html template and
+    returning a correctly rendered image and name on a webpage.
+
+    :param b64_img: A string that is a base64 encoded image that decodes into
+        image bytes
+    :type b64_img: str
+    :param name: The name of the patient
+    :type name: str
+    :return: A rendered html string that encodes for a webpage
+    :rtype: str
+    """
     template_string = """<h1>{{ my_title }}<h1>
     <img src='data:image/png;base64,{{ img_data }}'
         alt='img_data'  id='imgslot'/>"""
@@ -170,9 +183,9 @@ def try_intify(num: Union[int, float, bool, str, complex]) -> Union[int, bool]:
     or if there is any other error to return False.
 
     :param num: single value can be int, float, bool, str, complex
-
-    :returns: integer; False (if not convertible to int ot for any other
-    error).
+    :type num: Union[int, float, bool, str, complex]
+    :return: integer if it was convertable and a False if not
+    :rtype: Union[int, bool]
     """
     if isinstance(num, complex):  # TESTED
         if num.imag == 0:
@@ -231,8 +244,10 @@ def validate_input(in_data: dict,  # TESTED
     :param in_data: dictionary of data
     :param expected: dictionary data key types expectations (tuple)
 
-    :returns: String and 400 error (not dictionary, missing key, and
-    wrong  dictionary value type) or True + 200 code.
+    :return: String and 400 error (not dictionary, or wrong dictionary value
+     type) or True + 200 code.
+    :rtype: Tuple[Union[str, bool], int]
+
     """
     if not isinstance(in_data, dict):
         return "The input was not a dictionary.", 400
@@ -245,7 +260,24 @@ def validate_input(in_data: dict,  # TESTED
     return True, 200
 
 
-def correct_input(in_data: dict, expected: dict) -> Union[dict, str]:
+def correct_input(in_data: Dict[str, Union[str, list]],
+                  expected: Dict[str, type]) -> Union[db_entry, str]:
+    """Convert the default string inputs of the GUI into the indicated types
+
+    Takes the dictionary in_data from the post request and converts the values
+    to the data types indicated in the expected type dictionary. If the
+    conversion fails, the function returns a string indicating where the error
+    occurred. The internal conversions are handled by try_intify and
+    try_floatify for int and float types respectively.
+
+    :param in_data: Data received to the server by the POST request
+    :type in_data: Dict[str, Union[str, list]]
+    :param expected: Typed dictionary with keys matching the in_data keys
+    :type expected: Dict[str, type]
+    :return: A dictionary with correspondingly corrected types such that the
+        types match the expected types
+    :rtype: Union[db_entry, str]
+    """
     out_data = dict()
     for key, val in in_data.items():
         if expected[key] is int:
