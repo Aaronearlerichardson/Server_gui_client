@@ -6,15 +6,13 @@ from tkinter import ttk, filedialog
 from typing import TypeVar, Tuple, Union
 
 import requests
+from matplotlib.figure import Figure
 from pandas import DataFrame
 
 from calculations import get_metrics
 from ecg_reader import preprocess_data
 
-from matplotlib.figure import Figure
-
-
-server = "http://127.0.0.1:5000"
+server = "http://vcm-23126.vm.duke.edu:5000"
 PathLike = TypeVar("PathLike", str, bytes, os.PathLike)
 i_file = "temp.png"
 

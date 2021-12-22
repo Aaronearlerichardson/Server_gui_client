@@ -1,7 +1,8 @@
 import json
 import os
-import pytest
 import tkinter as tk
+
+import pytest
 
 test_file = os.path.join("test_data", "test_data1.csv")
 with open(os.path.join("tests", "b64.txt"), "r") as fobj:
