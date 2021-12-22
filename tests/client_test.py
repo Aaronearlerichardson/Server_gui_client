@@ -24,7 +24,6 @@ def test_data_to_fig():
 
 
 def test_photometrics():
-    root = tk.Tk()
     from GUI_client import photometrics_from_csv
     ans_photo_data, ans_metrics = photometrics_from_csv(test_file)
     for key, value in ans_metrics.items():
@@ -34,6 +33,7 @@ def test_photometrics():
         expected_metrics = json.load(jobj)
     expected_metrics["filename"] = os.path.basename(test_file)
     if "DISPLAY" in os.environ.keys():
+        root = tk.Tk()
         ans_photo = tk.PhotoImage(data=ans_photo_data)
         expected_photo = tk.PhotoImage(file=os.path.join("tests", "image.png"))
         assert isinstance(ans_photo, tk.PhotoImage)
