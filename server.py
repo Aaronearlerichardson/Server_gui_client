@@ -30,34 +30,29 @@ def get_status():  # no test needed!
 
 @app.route("/new_patient", methods=["POST"])
 def new_patient():
-    """This applies the new_patient route to post
-    new patient information to a dictionary.
+    """This applies the new_patient route to post new patient information to a
+    dictionary.
 
     This function is a POST request that when the address
     http://vcm-23126.vm.duke.edu/new_patient is inputted online, returns a
     jsonified string that states a dictionary of the patient_id, the
-    attending_username, and the patient_age. This function uses the posted
-    dictionary of new patient data and checks the id and age calling the try
-    intify function. Try intify runs the key values through a series of
-    statements that determine if it has an imaginary value of 0 (return the
-    real interger value or otherwise to return False), if the value is a float
-    and if it is equal to the interger of that value (returns the interger), if
-    the value is a boolean (returns False), or if there is any other error
-    to return False. Then this function runs a loop to output a
-    string that tells the user if the values are not convertible to
-    intergers. Then, the function calls validate input funx that checks
-    if the input was a dictionary(if not, return string and 400 error), if
-    the key specified is missing(if missing return string and 400 error),
-    and if the data type of each key is correct (if not return str and 400).
-    If all of this is correct, returns True and 200 code. Once the data is
-    determined to be True, it is added to a database and a string is returned
+    patient_name, the heart rate as 'hr', and the time that the data was stored
+    in the database. This function uses the posted dictionary of new patient
+    data and checks the id and age calling the correct input function, which
+    uses try intify and try floatify as backend. Then, the function calls the
+    validate input function that checks if the input was a dictionary(if not,
+    return string and 400 error), if the key specified is missing(if missing
+    return string and 400 error), and if the data type of each key is correct
+    (if not return str and 400). If all of this is correct, returns True and
+    200 code. Once the data is determined to be True, then the time is recorded
+    and it is added to a database and the added data as a ditionary is returned
     stating that a new patient was added with the code 200.
 
 
     :param: N/A
 
-    :returns: list of dictionary that includes patient_id, attending_username,
-    and patient_age; string + error code or string + completion code
+    :return: string of dictionary that includes patient_id, patient_name, time,
+    and hr; string + error code or string + completion code
     """
     data = request.get_json()
     data = correct_input(data, db_keys)
@@ -73,14 +68,42 @@ def new_patient():
 
 @app.route("/get", methods=["GET"])
 def get_all():
+    """Applies route for showing all data present on the server
+
+    This function is a GET request that when the address
+    http://vcm-23126.vm.duke.edu/get is inputted online, returns a
+    jsonified string that states all the data contained in the database defined
+    in database.py. The jsonified string, when parsed, is a dictionary with MRN
+    numbers as keys and all data associated with those MRNs as values. If the
+    database is empty, returns an empty dict.
+
+
+    :return: Dictionary with mrns as keys and data as values
+    :rtype: dict
+    """
     all_dict = dict()
-    for mrn in db.patient_id:
-        all_dict[mrn] = db.search(patient_id=mrn)
+    if "patient_id" in db.__dict__.keys():
+        for mrn in db.patient_id:
+            all_dict[mrn] = db.search(patient_id=mrn)
     return all_dict, 200
 
 
 @app.route("/get/<name_or_mrn>", methods=["GET"])
 def get_data(name_or_mrn: str) -> Tuple[Union[dict, str], int]:
+    """Applies route for showing all data associated with name or mrn
+
+    This function is a GET request that when the address
+    http://vcm-23126.vm.duke.edu/get is inputted online, returns a
+    jsonified string that states all the data contained in the database
+    associated with the name or MRN inputted. If there is more than one MRN
+    associated with the name given, then the most recent mrn is returned, and
+    other data can only be retrieved by inputting the mrn of the older data.
+
+    :param name_or_mrn: name or mrn of the relevant data to be retrieved
+    :type name_or_mrn: str
+    :return: data associated with that name or mrn
+    :rtype: str
+    """
     try:
         mrn = try_intify(name_or_mrn)
         match = db.search(patient_id=mrn, patient_name=name_or_mrn)
@@ -93,6 +116,21 @@ def get_data(name_or_mrn: str) -> Tuple[Union[dict, str], int]:
 
 @app.route("/get/<name_or_mrn>/image", methods=["GET"])
 def get_image(name_or_mrn: str) -> Tuple[str, int]:
+    """Applies route for showing image associated with the given name or mrn
+
+    This function is a GET request that when the address
+    http://vcm-23126.vm.duke.edu/get is inputted online, returns an html
+    rendered string (using render_image) that shows the image and associated
+    name on a webpage associated with the name or MRN inputted. If there is
+    more than one MRN associated with the name given, then the most recent mrn
+    is returned, and other images can only be retrieved by inputting the mrn of
+    the older data.
+
+    :param name_or_mrn: name or mrn of the relevant data to be retrieved
+    :type name_or_mrn: str
+    :return: html string of rendered image and name
+    :rtype: str
+    """
     try:
         mrn = try_intify(name_or_mrn)
         data = db.search(patient_id=mrn, patient_name=name_or_mrn)
