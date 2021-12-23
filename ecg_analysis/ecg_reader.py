@@ -22,7 +22,6 @@ def load_csv(local_file: str,
     :type cols: Union[List[str], Tuple[str]]
     :return: DataFrame read in of the csv file with headers given by cols
     :rtype: DataFrame
-    :
     """
 
     assert os.path.isfile(local_file)

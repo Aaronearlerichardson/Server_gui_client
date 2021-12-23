@@ -4,7 +4,7 @@ from typing import Union, Dict, Tuple, TypedDict
 from flask import Flask, request, render_template_string
 
 from database import Database
-from ecg_reader import is_num
+from ecg_analysis.ecg_reader import is_num
 
 app = Flask(__name__)
 db_keys = {"patient_id": int, "patient_name": str, "hr": float, "image": list}
@@ -17,47 +17,40 @@ db_entry = TypedDict("db_entry", **db_keys)
 def get_status():  # no test needed!
     """Applies route for showing that the server is on.
 
-    This route fnx is a get request that when the address
+    This route function is a get request that when the address
     http://vcm-23126.vm.duke.edu/ is inputted online, returns a
     jsonified string that says "Server is on".
 
-    :param: N/A
-
-    :returns: json string that the server is on
+    :return: json string that the server is on
+    :rtype: Tuple[str, int]
     """
-    return "Server is on"
+    return "Server is on", 200
 
 
 @app.route("/new_patient", methods=["POST"])
 def new_patient():
-    """This applies the new_patient route to post
-    new patient information to a dictionary.
+    """This applies the new_patient route to post new patient information to a
+    dictionary.
 
     This function is a POST request that when the address
     http://vcm-23126.vm.duke.edu/new_patient is inputted online, returns a
     jsonified string that states a dictionary of the patient_id, the
-    attending_username, and the patient_age. This function uses the posted
-    dictionary of new patient data and checks the id and age calling the try
-    intify function. Try intify runs the key values through a series of
-    statements that determine if it has an imaginary value of 0 (return the
-    real interger value or otherwise to return False), if the value is a float
-    and if it is equal to the interger of that value (returns the interger), if
-    the value is a boolean (returns False), or if there is any other error
-    to return False. Then this function runs a loop to output a
-    string that tells the user if the values are not convertible to
-    intergers. Then, the function calls validate input funx that checks
-    if the input was a dictionary(if not, return string and 400 error), if
-    the key specified is missing(if missing return string and 400 error),
-    and if the data type of each key is correct (if not return str and 400).
-    If all of this is correct, returns True and 200 code. Once the data is
-    determined to be True, it is added to a database and a string is returned
+    patient_name, the heart rate as 'hr', and the time that the data was stored
+    in the database. This function uses the posted dictionary of new patient
+    data and checks the id and hr calling the correct input function, which
+    uses try intify and try floatify as backend. Then, the function calls the
+    validate input function that checks if the input was a dictionary(if not,
+    return string and 400 error), if the key specified is missing(if missing
+    return string and 400 error), and if the data type of each key is correct
+    (if not return str and 400). If all of this is correct, returns True and
+    200 code. Once the data is determined to be True, then the time is recorded
+    and it is added to a database and the added data as a ditionary is returned
     stating that a new patient was added with the code 200.
 
 
-    :param: N/A
-
-    :returns: list of dictionary that includes patient_id, attending_username,
-    and patient_age; string + error code or string + completion code
+    :return: dictionary that includes patient_id, patient_name, time,
+    and hr; string + error code or string + completion code
+    :rtype: Tuple[dict, int]
     """
     data = request.get_json()
     data = correct_input(data, db_keys)
@@ -73,14 +66,45 @@ def new_patient():
 
 @app.route("/get", methods=["GET"])
 def get_all():
+    """Applies route for showing all data present on the server
+
+    This function is a GET request that when the address
+    http://vcm-23126.vm.duke.edu/get is inputted online, returns a
+    jsonified string that states all the data contained in the database defined
+    in database.py. The jsonified string, when parsed, is a dictionary with
+    index values as keys and all data (except the image data) associated with
+    those MRNs as values. If the database is empty, returns an empty dict.
+
+
+    :return: Dictionary with mrns as keys and data as values
+    :rtype: Tuple[dict, int]
+    """
     all_dict = dict()
-    for mrn in db.patient_id:
-        all_dict[mrn] = db.search(patient_id=mrn)
+    if db.Index in db.__dict__.keys():
+        for item in db.__dict__[db.Index]:
+            db_item = db.search(**{db.Index: item})
+            if "image" in db_item.keys():
+                del db_item["image"]
+            all_dict[item] = db_item
     return all_dict, 200
 
 
 @app.route("/get/<name_or_mrn>", methods=["GET"])
 def get_data(name_or_mrn: str) -> Tuple[Union[dict, str], int]:
+    """Applies route for showing all data associated with name or mrn
+
+    This function is a GET request that when the address
+    http://vcm-23126.vm.duke.edu/get/<name_or_mrn> is inputted online, returns
+    a jsonified string that states all the data contained in the database
+    associated with the name or MRN inputted. If there is more than one MRN
+    associated with the name given, then the most recent mrn is returned, and
+    other data can only be retrieved by inputting the mrn of the older data.
+
+    :param name_or_mrn: name or mrn of the relevant data to be retrieved
+    :type name_or_mrn: str
+    :return: data associated with that name or mrn
+    :rtype: Tuple[dict, int]
+    """
     try:
         mrn = try_intify(name_or_mrn)
         match = db.search(patient_id=mrn, patient_name=name_or_mrn)
@@ -93,6 +117,21 @@ def get_data(name_or_mrn: str) -> Tuple[Union[dict, str], int]:
 
 @app.route("/get/<name_or_mrn>/image", methods=["GET"])
 def get_image(name_or_mrn: str) -> Tuple[str, int]:
+    """Applies route for showing image associated with the given name or mrn
+
+    This function is a GET request that when the address
+    http://vcm-23126.vm.duke.edu/get/<name_or_mrn>/image is inputted online,
+    returns a html rendered string (using render_image) that shows the image
+    and associated name on a webpage associated with the name or MRN inputted.
+    If there is more than one MRN associated with the name given, then the most
+    recent mrn is returned, and other images can only be retrieved by inputting
+    the mrn of the older data.
+
+    :param name_or_mrn: name or mrn of the relevant data to be retrieved
+    :type name_or_mrn: str
+    :return: html string of rendered image and name
+    :rtype: Tuple[str, int]
+    """
     try:
         mrn = try_intify(name_or_mrn)
         data = db.search(patient_id=mrn, patient_name=name_or_mrn)
@@ -111,6 +150,21 @@ def get_image(name_or_mrn: str) -> Tuple[str, int]:
 
 
 def render_image(b64_img: str, name: str) -> str:
+    """Converts b64 image and patient name to a rendered html page
+
+    This function takes a b64 png image and patient name and converts it to a
+    string which can be rendered in a standard html page on a browser. It does
+    this by inserting the data into a locally stored html template and
+    returning a correctly rendered image and name on a webpage.
+
+    :param b64_img: A string that is a base64 encoded image that decodes into
+        image bytes
+    :type b64_img: str
+    :param name: The name of the patient
+    :type name: str
+    :return: A rendered html string that encodes for a webpage
+    :rtype: str
+    """
     template_string = """<h1>{{ my_title }}<h1>
     <img src='data:image/png;base64,{{ img_data }}'
         alt='img_data'  id='imgslot'/>"""
@@ -132,9 +186,9 @@ def try_intify(num: Union[int, float, bool, str, complex]) -> Union[int, bool]:
     or if there is any other error to return False.
 
     :param num: single value can be int, float, bool, str, complex
-
-    :returns: integer; False (if not convertible to int ot for any other
-    error).
+    :type num: Union[int, float, bool, str, complex]
+    :return: integer if it was convertable and a False if not
+    :rtype: Union[int, bool]
     """
     if isinstance(num, complex):  # TESTED
         if num.imag == 0:
@@ -193,8 +247,10 @@ def validate_input(in_data: dict,  # TESTED
     :param in_data: dictionary of data
     :param expected: dictionary data key types expectations (tuple)
 
-    :returns: String and 400 error (not dictionary, missing key, and
-    wrong  dictionary value type) or True + 200 code.
+    :return: String and 400 error (not dictionary, or wrong dictionary value
+     type) or True + 200 code.
+    :rtype: Tuple[Union[str, bool], int]
+
     """
     if not isinstance(in_data, dict):
         return "The input was not a dictionary.", 400
@@ -207,7 +263,24 @@ def validate_input(in_data: dict,  # TESTED
     return True, 200
 
 
-def correct_input(in_data: dict, expected: dict) -> Union[dict, str]:
+def correct_input(in_data: Dict[str, Union[str, list]],
+                  expected: Dict[str, type]) -> Union[db_entry, str]:
+    """Convert the default string inputs of the GUI into the indicated types
+
+    Takes the dictionary in_data from the post request and converts the values
+    to the data types indicated in the expected type dictionary. If the
+    conversion fails, the function returns a string indicating where the error
+    occurred. The internal conversions are handled by try_intify and
+    try_floatify for int and float types respectively.
+
+    :param in_data: Data received to the server by the POST request
+    :type in_data: Dict[str, Union[str, list]]
+    :param expected: Typed dictionary with keys matching the in_data keys
+    :type expected: Dict[str, type]
+    :return: A dictionary with correspondingly corrected types such that the
+        types match the expected types
+    :rtype: Union[db_entry, str]
+    """
     out_data = dict()
     for key, val in in_data.items():
         if expected[key] is int:

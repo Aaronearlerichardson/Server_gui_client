@@ -7,7 +7,7 @@ import pytest
 import scipy.signal as sig
 from testfixtures import LogCapture
 
-import ecg_reader as erd
+from ecg_analysis import ecg_reader as erd
 
 logging.basicConfig(level=logging.INFO)
 data_1 = pd.DataFrame.from_dict(
@@ -70,8 +70,8 @@ def test_filter():
 
 def test_preprocess():
     expected = erd.clean_data(
-        erd.load_csv(os.path.join(
-            "tests", "test_data1_orig.csv"), ["time", "voltage"]))
+        erd.load_csv(os.path.join("ecg_analysis", "tests",
+                                  "test_data1_orig.csv"), ["time", "voltage"]))
     with LogCapture() as log_c:
         answer = erd.preprocess_data(
             os.path.join("test_data", "test_data1.csv"),

@@ -5,7 +5,7 @@ import os
 from neurokit2 import ecg_peaks
 from pandas import DataFrame
 
-import ecg_reader as erd
+import ecg_analysis.ecg_reader as erd
 
 
 def get_metrics(data: DataFrame,
