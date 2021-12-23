@@ -13,7 +13,7 @@ from ecg_analysis.calculations import get_metrics
 from ecg_analysis.ecg_reader import preprocess_data
 from server import db
 
-server = "http://vcm-23126.vm.duke.edu:5000"
+server = "http://127.0.0.1:5000"  # "http://vcm-23126.vm.duke.edu:5000"
 PathLike = TypeVar("PathLike", str, bytes, os.PathLike)
 i_file = "temp.png"
 
@@ -229,7 +229,11 @@ def design_window():
             initialdir=csv_file.get(), title="Select a File", filetypes=(
                 ("csv files", "*.csv*"), ("all files", "*.*")))
         csv_file.set(file_name)
-        b64_img, metrics = photometrics_from_csv(file_name)
+        try:
+            b64_img, metrics = photometrics_from_csv(file_name)
+        except AssertionError:
+            print_to_gui("GUI only compatible with csv files")
+            return
         img_str.set(b64_img)
         heart_rate.set(str(metrics["mean_hr_bpm"]))
         photo = tk.PhotoImage(data=b64_img)

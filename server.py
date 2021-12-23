@@ -8,7 +8,8 @@ from ecg_analysis.ecg_reader import is_num
 
 app = Flask(__name__)
 db_keys = {"patient_id": int, "patient_name": str, "hr": float, "image": list}
-db = Database(index="patient_id")
+db = Database({"patient_id": "clear", "patient_name": "clear"},
+              index="patient_id")
 t_format = "%m-%d-%Y %H:%M:%S"
 db_entry = TypedDict("db_entry", **db_keys)
 
