@@ -11,7 +11,7 @@ from pandas import DataFrame
 
 from ecg_analysis.calculations import get_metrics
 from ecg_analysis.ecg_reader import preprocess_data
-from server import db
+from server import db, try_intify
 
 server = "http://127.0.0.1:5000"  # "http://vcm-23126.vm.duke.edu:5000"
 PathLike = TypeVar("PathLike", str, bytes, os.PathLike)
@@ -195,7 +195,9 @@ def design_window():
         # call external function to do work that can be tested
         patient = create_output(my_id, name, b64_img, hr)
         if patient is False:
-            print_to_gui("patient ID is a required field")
+            print_to_gui("Patient ID is a required field")
+        elif not try_intify(patient):
+            print_to_gui("Patient ID must be an integer")
         else:
             # send data to the server
             r = requests.post(server + "/new_patient", json=patient)
