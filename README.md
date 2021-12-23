@@ -34,7 +34,7 @@ run the commands:
 1) POST request: "/new_patient"
     * Sends patient data to the database in the form of a dictionary. It is required to have the key "patient_id", but may also contain "patient_name", "image", and "hr".
 2) GET request: "/get"
-    * Returns a dictionary of dictionaries. The top level dictionary has keys corresponding to the MRNs present on the database. The values correspond to the data existing on the database pertaining to that MRN. This includes the b64 image strings.
+    * Returns a dictionary of dictionaries. The top level dictionary has keys corresponding to the MRNs present on the database. The values correspond to the data existing on the database pertaining to that MRN. This does not include the b64 image strings.
 3) GET request: "/get/<mrn_or_name>"
     * Returns a dictionary of the data pertaining to the MRN or name given in the url. If there is more than one MRN associated with the name given, then the most recent mrn is returned, and other data can only be retrieved by inputting the mrn of the older data. This data does __not__ include the b64 image strings
 4) GET request: "/get/<mrn_or_name>/image"
@@ -52,6 +52,7 @@ The database is a class which inherits the properties of a list of dictionaries.
 6) __Send Button:__ Sends all data visible on the GUI (name, id, image, heart rate) to the server. The only required data in order to successfully send to the database is the ID. If you send data to the server, and that ID already exists on the server, then that file will be updated with the new information you send it.
 7) __Retrieve Button:__ Retrieves and displays all data stored on server corresponding with the MRN/ID selected from the dropdown box. The dropdown box will always contain the option 'clear', which clears the image, patient id, and patient name from the gui when retrieved.
 8) __Cancel Button:__ Closes the window
+9) __Clear Button:__ Clears all data from the GUI
 ## _License:_
 MIT License
 

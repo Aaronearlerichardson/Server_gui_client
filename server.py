@@ -8,8 +8,7 @@ from ecg_analysis.ecg_reader import is_num
 
 app = Flask(__name__)
 db_keys = {"patient_id": int, "patient_name": str, "hr": float, "image": list}
-db = Database({"patient_id": "clear", "patient_name": "clear"},
-              index="patient_id")
+db = Database(index="patient_id")
 t_format = "%m-%d-%Y %H:%M:%S"
 db_entry = TypedDict("db_entry", **db_keys)
 
@@ -73,8 +72,8 @@ def get_all():
     http://vcm-23126.vm.duke.edu/get is inputted online, returns a
     jsonified string that states all the data contained in the database defined
     in database.py. The jsonified string, when parsed, is a dictionary with
-    index values as keys and all data associated with those MRNs as values. If
-    the database is empty, returns an empty dict.
+    index values as keys and all data (except the image data) associated with
+    those MRNs as values. If the database is empty, returns an empty dict.
 
 
     :return: Dictionary with mrns as keys and data as values
@@ -83,7 +82,10 @@ def get_all():
     all_dict = dict()
     if db.Index in db.__dict__.keys():
         for item in db.__dict__[db.Index]:
-            all_dict[item] = db.search(**{db.Index: item})
+            db_item = db.search(**{db.Index: item})
+            if "image" in db_item.keys():
+                del db_item["image"]
+            all_dict[item] = db_item
     return all_dict, 200
 
 

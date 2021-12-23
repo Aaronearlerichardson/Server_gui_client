@@ -196,7 +196,7 @@ def design_window():
         patient = create_output(my_id, name, b64_img, hr)
         if patient is False:
             print_to_gui("Patient ID is a required field")
-        elif not try_intify(patient):
+        elif not try_intify(my_id):
             print_to_gui("Patient ID must be an integer")
         else:
             # send data to the server
@@ -309,6 +309,20 @@ def design_window():
             heart_rate.set("")
             img_label.config(text="")
 
+    def clear_all():
+        """Clears data from the GUI
+
+        This function is executed by the 'Clear' button, and clears all data
+        from the GUI. This includes the image, name, ID, and heart rate.
+
+        """
+        name_data.set("")
+        id_data.set("")
+        heart_rate.set("")
+        img_str.set("")
+        img_label.config(text="")
+        img_grid.image_ref = tk.PhotoImage(data="")
+
     root = tk.Tk()
     root.title("Health Database GUI")
 
@@ -351,6 +365,9 @@ def design_window():
     retr_button = ttk.Button(root, text="Retrieve",
                              command=lambda: retrieve_file(patient_mrn.get()))
     retr_button.grid(column=6, row=2)
+
+    clear_button = ttk.Button(root, text="Clear", command=clear_all)
+    clear_button.grid(column=6, row=3)
 
     img_str = tk.StringVar()
     img_grid = tk.Label(root, image=tk.PhotoImage(data=img_str.get()))
