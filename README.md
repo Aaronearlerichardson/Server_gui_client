@@ -50,7 +50,7 @@ The database is a class which inherits the properties of a list of dictionaries.
    1) Example data files can be found in the 'test_data' folder
    2) The average heart rate will be displayed above the image if one is plotted
 6) __Send Button:__ Sends all data visible on the GUI (name, id, image, heart rate) to the server. The only required data in order to successfully send to the database is the ID. If you send data to the server, and that ID already exists on the server, then that file will be updated with the new information you send it.
-7) __Retrieve Button:__ Retrieves and displays all data stored on server corresponding with the MRN/ID selected from the dropdown box. The dropdown box will always contain the option 'clear', which clears the image, patient id, and patient name from the gui when retrieved.
+7) __Retrieve Button:__ Retrieves and displays all data stored on server corresponding with the MRN/ID selected from the dropdown box.
 8) __Cancel Button:__ Closes the window
 9) __Clear Button:__ Clears all data from the GUI
 ## _License:_
