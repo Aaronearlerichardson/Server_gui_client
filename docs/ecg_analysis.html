@@ -1,0 +1,439 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>ecg_analysis package &#8212; Server_gui_client 1.0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_build/html/_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_build/html/_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_build/html/_static/documentation_options.js"></script>
+    <script src="_build/html/_static/jquery.js"></script>
+    <script src="_build/html/_static/underscore.js"></script>
+    <script src="_build/html/_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ecg_analysis.tests package" href="ecg_analysis.tests.html" />
+    <link rel="prev" title="database module" href="database.html" />
+   
+  <link rel="stylesheet" href="_build/html/_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="ecg-analysis-package">
+<h1>ecg_analysis package<a class="headerlink" href="#ecg-analysis-package" title="Permalink to this headline">¶</a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ecg_analysis.tests.html">ecg_analysis.tests package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ecg_analysis.tests.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecg_analysis.tests.html#module-ecg_analysis.tests.calc_test">ecg_analysis.tests.calc_test module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecg_analysis.tests.html#module-ecg_analysis.tests.reader_test">ecg_analysis.tests.reader_test module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecg_analysis.tests.html#module-ecg_analysis.tests">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-ecg_analysis.calculations">
+<span id="ecg-analysis-calculations-module"></span><h2>ecg_analysis.calculations module<a class="headerlink" href="#module-ecg_analysis.calculations" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="ecg_analysis.calculations.dict2json">
+<span class="sig-prename descclassname"><span class="pre">ecg_analysis.calculations.</span></span><span class="sig-name descname"><span class="pre">dict2json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">my_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'files'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ecg_analysis.calculations.dict2json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes a dict and folder name and writes dict data to file in folder</p>
+<p>Take a dictionary and writes it to a JSON file in a folder. Folder is
+called ‘files’ unless specified otherwise. The base name of the file is
+indicated by the ‘filename’ key in the dictionary, which is not included
+in the JSON itself</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>my_dict</strong> (<em>dict</em>) – dictionary of items to write to the JSON file</p></li>
+<li><p><strong>folder</strong> (<em>str</em>) – folder to save the files in. Default is ‘files’</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ecg_analysis.calculations.get_metrics">
+<span class="sig-prename descclassname"><span class="pre">ecg_analysis.calculations.</span></span><span class="sig-name descname"><span class="pre">get_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'time'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'voltage'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rounding</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#ecg_analysis.calculations.get_metrics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates all relevant metrics in an ECG data set</p>
+<p>This function takes in a dataframe with the keys ‘t_key’ and ‘v_key’ which
+by default are ‘time’ and ‘voltage’ respectively. It returns a dictionary
+with the duration, voltage extremes, filename, number of beats, beats per
+minute, anda list of beat times stored in it paired with the relevant key.
+Each numeric metric is rounded to three decimal places by default, which
+can be changed by assigning an integer to the ‘rounding’ parameter</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>DataFrame</em>) – A pandas dataframe that contains the fields t_key and v_key</p></li>
+<li><p><strong>t_key</strong> (<em>str</em>) – String indicating the name of the time column in data.
+‘time’ by default.</p></li>
+<li><p><strong>v_key</strong> (<em>str</em>) – String indicating the name of the voltage column in data.
+‘voltage’ by default.</p></li>
+<li><p><strong>rounding</strong> (<em>int</em>) – An integer indicating the number of decimals to round to.
+3 by default</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dictionary with the keys: duration, beats, extremes, filename,
+num_beats, mean_hr_bpm</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ecg_analysis.calculations.remove_dir">
+<span class="sig-prename descclassname"><span class="pre">ecg_analysis.calculations.</span></span><span class="sig-name descname"><span class="pre">remove_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ecg_analysis.calculations.remove_dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes a folder name and removes it, even if it contains files</p>
+<p>Deletes the selected folder by listing through the files and deleting them
+one by one and then deleting the empty folder</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>directory</strong> (<em>str</em>) – Directory path to remove it and its contents</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-ecg_analysis.ecg_reader">
+<span id="ecg-analysis-ecg-reader-module"></span><h2>ecg_analysis.ecg_reader module<a class="headerlink" href="#module-ecg_analysis.ecg_reader" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="ecg_analysis.ecg_reader.apply_to_df">
+<span class="sig-prename descclassname"><span class="pre">ecg_analysis.ecg_reader.</span></span><span class="sig-name descname"><span class="pre">apply_to_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">my_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invert</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ecg_analysis.ecg_reader.apply_to_df" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies given boolean function to DataFrame rows and removes False rows</p>
+<p>Takes a DataFrame my_data and applies a function func element by element to
+determine bool value. Per given row, it then checks if all column elements.
+If invert is False, then it deletes any rows where func is false in at
+least one column. Conversely, if invert is True, it deletes every row where
+func is true in at least one column.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>my_data</strong> (<em>DataFrame</em>) – DataFrame where func is applied element-wise</p></li>
+<li><p><strong>func</strong> (<em>object</em>) – function passed to apply. Takes in a DataFrame element and
+returns a boolean value</p></li>
+<li><p><strong>invert</strong> (<em>bool</em>) – Indication of whether to delete rows where the func is true
+or false in at least one column</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>DataFrame where func returns true or false (depending on invert)
+for every column</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ecg_analysis.ecg_reader.check_range">
+<span class="sig-prename descclassname"><span class="pre">ecg_analysis.ecg_reader.</span></span><span class="sig-name descname"><span class="pre">check_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_set</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.core.series.Series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ecg_analysis.ecg_reader.check_range" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks to see if a value of a given Series is outside a given range</p>
+<p>Takes a Series and logs an error if there are any values above the param
+upper or below the param lower.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_set</strong> (<em>Series</em>) – Series to check the range of its values</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – File name to indicate in the error log</p></li>
+<li><p><strong>upper</strong> (<em>Union</em><em>[</em><em>float</em><em>, </em><em>int</em><em>]</em>) – Upper limit of the range. Log if any values are above this.</p></li>
+<li><p><strong>lower</strong> (<em>Union</em><em>[</em><em>float</em><em>, </em><em>int</em><em>]</em>) – Lower limit of the range. Log if any values are above this.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ecg_analysis.ecg_reader.clean_data">
+<span class="sig-prename descclassname"><span class="pre">ecg_analysis.ecg_reader.</span></span><span class="sig-name descname"><span class="pre">clean_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">my_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ecg_analysis.ecg_reader.clean_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cleans missing, nan, and non numeric values from a DataFrame</p>
+<p>Takes a DataFrame and checks each element for a missing, nan, or non
+numeric value and then removes the whole row if it does. Returns the
+cleaned DataFrame and logs the row indices and DataFrame names of
+erroneous rows.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>my_data</strong> (<em>DataFrame</em>) – DataFrame to be cleaned</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>DataFrame without any missing, nan, or non numeric values</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ecg_analysis.ecg_reader.filter_data">
+<span class="sig-prename descclassname"><span class="pre">ecg_analysis.ecg_reader.</span></span><span class="sig-name descname"><span class="pre">filter_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">my_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.core.series.Series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">first_samp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_samp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="headerlink" href="#ecg_analysis.ecg_reader.filter_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter ECG data using a band pass FIR filter with reflected padding</p>
+<p>Takes a pandas Series indicating voltage values of an ECG and filters it
+using a finite impulse response (FIR) filter. The padding is reflected to
+keep from too much attenuation or inversion of the signal. It uses the
+first and last time points to calculate the sample rate, and takes a
+variable high and low pass frequency for the band pass. This function uses
+mne for backend and their documentation can be found below. Keyword
+arguments corresponding to their documentation can be set in this function
+call.</p>
+<p>link: <a class="reference external" href="https://mne.tools/stable/generated/mne.filter.filter_data.html">https://mne.tools/stable/generated/mne.filter.filter_data.html</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>my_data</strong> (<em>Series</em>) – Series data describing the voltage time-series</p></li>
+<li><p><strong>first_samp</strong> (<em>Union</em><em>[</em><em>float</em><em>, </em><em>int</em><em>]</em>) – number indicating the time at which the first sample was
+taken</p></li>
+<li><p><strong>last_samp</strong> (<em>Union</em><em>[</em><em>float</em><em>, </em><em>int</em><em>]</em>) – number indicating the time at which the last sample was
+taken</p></li>
+<li><p><strong>high</strong> (<em>Union</em><em>[</em><em>float</em><em>, </em><em>int</em><em>]</em>) – The top of the range of the band pass filter. Must be higher
+than the low parameter</p></li>
+<li><p><strong>low</strong> (<em>Union</em><em>[</em><em>float</em><em>, </em><em>int</em><em>]</em>) – The bottom of the range of the band pass filter. Must be lower
+than the high parameter</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>numpy array of the filtered data</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ecg_analysis.ecg_reader.is_mt_str">
+<span class="sig-prename descclassname"><span class="pre">ecg_analysis.ecg_reader.</span></span><span class="sig-name descname"><span class="pre">is_mt_str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">my_str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#ecg_analysis.ecg_reader.is_mt_str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check to see if the given input is an empty string</p>
+<p>Function that checks the given parameter my_str to see if it is an empty
+string. Uses the innate identity __eq__ to check.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>my_str</strong> (<em>str</em>) – String to check if it is empty</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Boolean indicating if the input is an empty string</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ecg_analysis.ecg_reader.is_nan">
+<span class="sig-prename descclassname"><span class="pre">ecg_analysis.ecg_reader.</span></span><span class="sig-name descname"><span class="pre">is_nan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#ecg_analysis.ecg_reader.is_nan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check to see if x is an nan value</p>
+<p>Check to see if the given parameter x is an nan value. Similar to np.isnan,
+but with the capability to read strings as well as number types. Attempts
+to convert strings to floats to do so.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>Union</em><em>[</em><em>int</em><em>, </em><em>float</em><em>, </em><em>str</em><em>]</em>) – Input to check if it is nan</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Boolean indicating the whether the input is nan</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ecg_analysis.ecg_reader.is_num">
+<span class="sig-prename descclassname"><span class="pre">ecg_analysis.ecg_reader.</span></span><span class="sig-name descname"><span class="pre">is_num</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#ecg_analysis.ecg_reader.is_num" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that tests if object can be converted to number</p>
+<p>A function that takes any input and detects if it is a number by
+attempting to convert the input to a float. This function catches
+convertable digit string cases.</p>
+<p>Source:
+<a class="reference external" href="https://stackoverflow.com/questions/354038">https://stackoverflow.com/questions/354038</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>num</strong> (<em>Any</em>) – object data to determine if it is conceivably an number</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a boolean determination if the input is a number</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ecg_analysis.ecg_reader.load_csv">
+<span class="sig-prename descclassname"><span class="pre">ecg_analysis.ecg_reader.</span></span><span class="sig-name descname"><span class="pre">load_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">local_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">('time',</span> <span class="pre">'voltage')</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.core.frame.DataFrame</span></span></span><a class="headerlink" href="#ecg_analysis.ecg_reader.load_csv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads a patient file.csv into a DataFrame</p>
+<p>Takes a file path to a csv file and reads then writes the data into a
+dataframe with the column headers indicated by cols.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>local_file</strong> (<em>str</em>) – path to local .csv file</p></li>
+<li><p><strong>cols</strong> (<em>Union</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>, </em><em>Tuple</em><em>[</em><em>str</em><em>]</em><em>]</em>) – list or tuple indicating the column headers for the output
+dataframe. (‘time’, ‘voltage’) by default</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>DataFrame read in of the csv file with headers given by cols</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ecg_analysis.ecg_reader.preprocess_data">
+<span class="sig-prename descclassname"><span class="pre">ecg_analysis.ecg_reader.</span></span><span class="sig-name descname"><span class="pre">preprocess_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tlabel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'time'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vlabel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'voltage'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw_max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw_min</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l_freq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_freq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clean_only</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.core.frame.DataFrame</span></span></span><a class="headerlink" href="#ecg_analysis.ecg_reader.preprocess_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes a csv ECG file and runs a full preprocessing pipeline on it</p>
+<p>Reads a given csv file path into a DataFrame, which is assigned the headers
+tlabel and vlabel. First, it cleans any bad data from the DataFrae using
+clean_data(). It then logs whether an values are outside the range
+[raw_min, raw_max] and logs it. Lastly, it takes the vlabel column and
+filters it using the filter_data() function. Any mne keyword arguments may
+be piped into the filter function through <a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_path</strong> (<em>str</em>) – Path to the csv file the will be read into the DataFrame</p></li>
+<li><p><strong>tlabel</strong> (<em>str</em>) – Label for the time column of the DataFrame.</p></li>
+<li><p><strong>vlabel</strong> (<em>str</em>) – Label for the voltage column of the DataFrame</p></li>
+<li><p><strong>raw_max</strong> (<em>Union</em><em>[</em><em>float</em><em>, </em><em>int</em><em>]</em>) – Upper end of the range allowed for the voltage data.</p></li>
+<li><p><strong>raw_min</strong> (<em>Union</em><em>[</em><em>float</em><em>, </em><em>int</em><em>]</em>) – Lower end of the range allowed for the voltage data.
+Default value is the negative of the raw_max.</p></li>
+<li><p><strong>l_freq</strong> (<em>Union</em><em>[</em><em>float</em><em>, </em><em>int</em><em>]</em>) – Lower frequency band of the band pass filter</p></li>
+<li><p><strong>h_freq</strong> (<em>Union</em><em>[</em><em>float</em><em>, </em><em>int</em><em>]</em>) – Upper frequency band of the band pas filter</p></li>
+<li><p><strong>clean_only</strong> (<em>bool</em>) – Option to not filter the data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A fully preprocessed DataFrame of the time and voltage data</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-ecg_analysis">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ecg_analysis" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Server_gui_client</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="database.html">database module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">ecg_analysis package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-ecg_analysis.calculations">ecg_analysis.calculations module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-ecg_analysis.ecg_reader">ecg_analysis.ecg_reader module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-ecg_analysis">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ecg_analysis.tests.html">ecg_analysis.tests package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GUI_client.html">GUI_client module</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Server_gui_client</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="GUI_client.html">GUI_client module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="database.html">database module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">ecg_analysis package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="server.html">server module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html">tests package</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="server.html">server module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests.html">tests package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="database.html" title="previous chapter">database module</a></li>
+      <li>Next: <a href="ecg_analysis.tests.html" title="next chapter">ecg_analysis.tests package</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Aaron Earle-Richardson.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_build/html/_sources/ecg_analysis.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

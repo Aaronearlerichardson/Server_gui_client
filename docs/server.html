@@ -1,0 +1,388 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>server module &#8212; Server_gui_client 1.0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_build/html/_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_build/html/_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_build/html/_static/documentation_options.js"></script>
+    <script src="_build/html/_static/jquery.js"></script>
+    <script src="_build/html/_static/underscore.js"></script>
+    <script src="_build/html/_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="tests package" href="tests.html" />
+    <link rel="prev" title="Server_gui_client" href="modules.html" />
+   
+  <link rel="stylesheet" href="_build/html/_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-server">
+<span id="server-module"></span><h1>server module<a class="headerlink" href="#module-server" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="server.correct_input">
+<span class="sig-prename descclassname"><span class="pre">server.</span></span><span class="sig-name descname"><span class="pre">correct_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">type</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#server.db_entry" title="server.db_entry"><span class="pre">server.db_entry</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#server.correct_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert the default string inputs of the GUI into the indicated types</p>
+<p>Takes the dictionary in_data from the post request and converts the values
+to the data types indicated in the expected type dictionary. If the
+conversion fails, the function returns a string indicating where the error
+occurred. The internal conversions are handled by try_intify and
+try_floatify for int and float types respectively.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_data</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Union</em><em>[</em><em>str</em><em>, </em><em>list</em><em>]</em><em>]</em>) – Data received to the server by the POST request</p></li>
+<li><p><strong>expected</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>type</em><em>]</em>) – Typed dictionary with keys matching the in_data keys</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dictionary with correspondingly corrected types such that the
+types match the expected types</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Union[<a class="reference internal" href="#server.db_entry" title="server.db_entry">db_entry</a>, str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="server.db_entry">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">server.</span></span><span class="sig-name descname"><span class="pre">db_entry</span></span><a class="headerlink" href="#server.db_entry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="server.db_entry.hr">
+<span class="sig-name descname"><span class="pre">hr</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#server.db_entry.hr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="server.db_entry.image">
+<span class="sig-name descname"><span class="pre">image</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span></em><a class="headerlink" href="#server.db_entry.image" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="server.db_entry.patient_id">
+<span class="sig-name descname"><span class="pre">patient_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#server.db_entry.patient_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="server.db_entry.patient_name">
+<span class="sig-name descname"><span class="pre">patient_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#server.db_entry.patient_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="server.get_all">
+<span class="sig-prename descclassname"><span class="pre">server.</span></span><span class="sig-name descname"><span class="pre">get_all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#server.get_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies route for showing all data present on the server</p>
+<p>This function is a GET request that when the address
+<a class="reference external" href="http://vcm-23126.vm.duke.edu/get">http://vcm-23126.vm.duke.edu/get</a> is inputted online, returns a
+jsonified string that states all the data contained in the database defined
+in database.py. The jsonified string, when parsed, is a dictionary with
+index values as keys and all data (except the image data) associated with
+those MRNs as values. If the database is empty, returns an empty dict.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Dictionary with mrns as keys and data as values</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Tuple[dict, int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="server.get_data">
+<span class="sig-prename descclassname"><span class="pre">server.</span></span><span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name_or_mrn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#server.get_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies route for showing all data associated with name or mrn</p>
+<p>This function is a GET request that when the address
+<a class="reference external" href="http://vcm-23126.vm.duke.edu/get">http://vcm-23126.vm.duke.edu/get</a>/&lt;name_or_mrn&gt; is inputted online, returns
+a jsonified string that states all the data contained in the database
+associated with the name or MRN inputted. If there is more than one MRN
+associated with the name given, then the most recent mrn is returned, and
+other data can only be retrieved by inputting the mrn of the older data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name_or_mrn</strong> (<em>str</em>) – name or mrn of the relevant data to be retrieved</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>data associated with that name or mrn</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Tuple[dict, int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="server.get_image">
+<span class="sig-prename descclassname"><span class="pre">server.</span></span><span class="sig-name descname"><span class="pre">get_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name_or_mrn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#server.get_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies route for showing image associated with the given name or mrn</p>
+<p>This function is a GET request that when the address
+<a class="reference external" href="http://vcm-23126.vm.duke.edu/get">http://vcm-23126.vm.duke.edu/get</a>/&lt;name_or_mrn&gt;/image is inputted online,
+returns a html rendered string (using render_image) that shows the image
+and associated name on a webpage associated with the name or MRN inputted.
+If there is more than one MRN associated with the name given, then the most
+recent mrn is returned, and other images can only be retrieved by inputting
+the mrn of the older data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name_or_mrn</strong> (<em>str</em>) – name or mrn of the relevant data to be retrieved</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>html string of rendered image and name</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Tuple[str, int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="server.get_status">
+<span class="sig-prename descclassname"><span class="pre">server.</span></span><span class="sig-name descname"><span class="pre">get_status</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#server.get_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies route for showing that the server is on.</p>
+<p>This route function is a get request that when the address
+<a class="reference external" href="http://vcm-23126.vm.duke.edu/">http://vcm-23126.vm.duke.edu/</a> is inputted online, returns a
+jsonified string that says “Server is on”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>json string that the server is on</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Tuple[str, int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="server.new_patient">
+<span class="sig-prename descclassname"><span class="pre">server.</span></span><span class="sig-name descname"><span class="pre">new_patient</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#server.new_patient" title="Permalink to this definition">¶</a></dt>
+<dd><p>This applies the new_patient route to post new patient information to a
+dictionary.</p>
+<p>This function is a POST request that when the address
+<a class="reference external" href="http://vcm-23126.vm.duke.edu/new_patient">http://vcm-23126.vm.duke.edu/new_patient</a> is inputted online, returns a
+jsonified string that states a dictionary of the patient_id, the
+patient_name, the heart rate as ‘hr’, and the time that the data was stored
+in the database. This function uses the posted dictionary of new patient
+data and checks the id and hr calling the correct input function, which
+uses try intify and try floatify as backend. Then, the function calls the
+validate input function that checks if the input was a dictionary(if not,
+return string and 400 error), if the key specified is missing(if missing
+return string and 400 error), and if the data type of each key is correct
+(if not return str and 400). If all of this is correct, returns True and
+200 code. Once the data is determined to be True, then the time is recorded
+and it is added to a database and the added data as a ditionary is returned
+stating that a new patient was added with the code 200.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>dictionary that includes patient_id, patient_name, time,</p>
+</dd>
+</dl>
+<p>and hr; string + error code or string + completion code
+:rtype: Tuple[dict, int]</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="server.render_image">
+<span class="sig-prename descclassname"><span class="pre">server.</span></span><span class="sig-name descname"><span class="pre">render_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">b64_img</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#server.render_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts b64 image and patient name to a rendered html page</p>
+<p>This function takes a b64 png image and patient name and converts it to a
+string which can be rendered in a standard html page on a browser. It does
+this by inserting the data into a locally stored html template and
+returning a correctly rendered image and name on a webpage.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>b64_img</strong> (<em>str</em>) – A string that is a base64 encoded image that decodes into
+image bytes</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – The name of the patient</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A rendered html string that encodes for a webpage</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="server.try_floatify">
+<span class="sig-prename descclassname"><span class="pre">server.</span></span><span class="sig-name descname"><span class="pre">try_floatify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">complex</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#server.try_floatify" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that tests if object can be converted to number</p>
+<p>A function that takes any input and detects if it is a number by
+attempting to convert the input to a float. This function catches
+convertable digit string cases.</p>
+<p>Source:
+<a class="reference external" href="https://stackoverflow.com/questions/354038">https://stackoverflow.com/questions/354038</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>num</strong> (<em>Union</em><em>[</em><em>int</em><em>, </em><em>float</em><em>, </em><em>bool</em><em>, </em><em>str</em><em>, </em><em>complex</em><em>]</em>) – object data to determine if it is conceivably a number</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a boolean determination if the input is a number, or the floating
+point number itself</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Union[float, bool]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="server.try_intify">
+<span class="sig-prename descclassname"><span class="pre">server.</span></span><span class="sig-name descname"><span class="pre">try_intify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">complex</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#server.try_intify" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tries to convert input to integer and if this is not possible,
+then the func returns false.</p>
+<p>The func runs the value through a series of statements that
+determine if the value has an imaginary value of 0 (return only the
+real integer value or otherwise to return False), if the value
+is a float and if it is equal to the integer of that value
+(returns the integer), if the value is a boolean (returns False),
+or if there is any other error to return False.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>num</strong> (<em>Union</em><em>[</em><em>int</em><em>, </em><em>float</em><em>, </em><em>bool</em><em>, </em><em>str</em><em>, </em><em>complex</em><em>]</em>) – single value can be int, float, bool, str, complex</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>integer if it was convertable and a False if not</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Union[int, bool]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="server.validate_input">
+<span class="sig-prename descclassname"><span class="pre">server.</span></span><span class="sig-name descname"><span class="pre">validate_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">type</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#server.validate_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determines if the data given is a dictionary, if the key exsists in
+the input, and if the value in the key matches the type that was expected.</p>
+<p>An expectation of the type of data in each key is established
+and fed into this function along with a dictionary data set.
+The Validate input funx then checks if the input was a dictionary(if not,
+return string and 400 error), if the key specified is missing(if missing
+return string and 400 error), and if the data type of each key is correct
+(if not return str and 400).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_data</strong> – dictionary of data</p></li>
+<li><p><strong>expected</strong> – dictionary data key types expectations (tuple)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>String and 400 error (not dictionary, or wrong dictionary value
+type) or True + 200 code.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Tuple[Union[str, bool], int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Server_gui_client</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="database.html">database module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ecg_analysis.html">ecg_analysis package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ecg_analysis.tests.html">ecg_analysis.tests package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GUI_client.html">GUI_client module</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Server_gui_client</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="GUI_client.html">GUI_client module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="database.html">database module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecg_analysis.html">ecg_analysis package</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">server module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html">tests package</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">server module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests.html">tests package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">Server_gui_client</a><ul>
+      <li>Previous: <a href="modules.html" title="previous chapter">Server_gui_client</a></li>
+      <li>Next: <a href="tests.html" title="next chapter">tests package</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Aaron Earle-Richardson.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_build/html/_sources/server.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,258 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>GUI_client module &#8212; Server_gui_client 1.0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_build/html/_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_build/html/_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_build/html/_static/documentation_options.js"></script>
+    <script src="_build/html/_static/jquery.js"></script>
+    <script src="_build/html/_static/underscore.js"></script>
+    <script src="_build/html/_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Server_gui_client" href="modules.html" />
+    <link rel="prev" title="ecg_analysis.tests package" href="ecg_analysis.tests.html" />
+   
+  <link rel="stylesheet" href="_build/html/_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-GUI_client">
+<span id="gui-client-module"></span><h1>GUI_client module<a class="headerlink" href="#module-GUI_client" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="GUI_client.create_output">
+<span class="sig-prename descclassname"><span class="pre">GUI_client.</span></span><span class="sig-name descname"><span class="pre">create_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">patient_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">patient_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#GUI_client.create_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes the inputs and converts it to a POST request format</p>
+<p>This function takes the patient_id, patient_name, image, and heart rate
+(hr) and inserts them into a dictionary to be sent in a POST request to the
+server. All inputs are required, but because the inputs are tkinter
+StringVars, any ‘missing’ inputs will be read in as empty strings. If the
+parameter indicated to be the index is an empty string, this function
+returns False. Any other parameter that is an empty string will just not be
+added to the POST request. If the parameter ‘image’ is not empty, that is
+inserted into a list before it is added to the dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>patient_id</strong> (<em>str</em>) – The MRN of the patient</p></li>
+<li><p><strong>patient_name</strong> (<em>str</em>) – The name of the patient</p></li>
+<li><p><strong>image</strong> (<em>str</em>) – The patient’s ECG image, encoded as a base 64 string</p></li>
+<li><p><strong>hr</strong> (<em>str</em>) – The calculated average heart rate of the patient, calculated
+from the ECG image</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A POST request compatible dictionary with keys matching the
+parameter names</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="GUI_client.data_to_fig">
+<span class="sig-prename descclassname"><span class="pre">GUI_client.</span></span><span class="sig-name descname"><span class="pre">data_to_fig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">img_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GUI_client.PathLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'temp.png'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#GUI_client.data_to_fig" title="Permalink to this definition">¶</a></dt>
+<dd><p>function that saves a matplotlib figure from a two column DataFrame</p>
+<p>This function takes a Pandas Dataframe with the columns ‘time’ and
+‘voltage’ as well as the name of the image file to write the plot to. It
+takes this data and saves the figure to the indicated image file. It favors
+usage of the matplotlib figure object over pyplot due to issues with
+backend and tkinter when using pyplot.</p>
+<p>source: <a class="reference external" href="https://stackoverflow.com/questions/37604289">https://stackoverflow.com/questions/37604289</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>DataFrame</em>) – DataFrame with columns “time” and “voltage”</p></li>
+<li><p><strong>img_file</strong> (<em>Pathlike</em>) – Path string for intended file to write the figure image to</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="GUI_client.design_window">
+<span class="sig-prename descclassname"><span class="pre">GUI_client.</span></span><span class="sig-name descname"><span class="pre">design_window</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#GUI_client.design_window" title="Permalink to this definition">¶</a></dt>
+<dd><p>The function which defines the shape and design of the tkinter GUI</p>
+<p>This function lays out and defines placement for all the elements of the
+graphic user interface. It assigns placement via the tkinter grid
+functionality, and assigns element functionality via embedded functions.
+The individual gui elements include a title, top label, a name, ID, and
+file entry box each with their own labels, a file retrieval combo box with
+its own label, a browse button that opens the local file browser for the
+user to select a csv file to upload, a retrieve button that takes the
+indicated MRN from the retrieval combo box and retrieves the patient data
+from the server via a GET request, a send button that updates the
+information on the server side with the current information on the GUI, a
+cancel button which closes the window, an image label which is updated by
+either the browse or retrieve commands and has a top label which displays
+the heart rate of the patient, and lastly a label below the image which
+displays the server response.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="GUI_client.image_to_b64">
+<span class="sig-prename descclassname"><span class="pre">GUI_client.</span></span><span class="sig-name descname"><span class="pre">image_to_b64</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GUI_client.PathLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'temp.png'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#GUI_client.image_to_b64" title="Permalink to this definition">¶</a></dt>
+<dd><p>function that converts an image file to a base64 encoded string</p>
+<p>This function takes a file path to an image (default value ‘temp.png’) and
+converts that image to a base 64 encoded string. The encoding protocol of
+the string is utf-8. The file object is read as bytes into the string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>img_file</strong> (<em>Pathlike</em>) – Path to the image file, default value is ‘temp.png’</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Base 64 string of the image file</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="GUI_client.img_from_html">
+<span class="sig-prename descclassname"><span class="pre">GUI_client.</span></span><span class="sig-name descname"><span class="pre">img_from_html</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">html_str</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#GUI_client.img_from_html" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scrubs the string of a html page for the b64 string of in image</p>
+<p>This function uses regex to scan the html template described in the render
+image function. It scans this template for the base 64 string encoded png
+image and extracts it from the template. This string is then returned.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>html_str</strong> (<em>str</em>) – The string of the html page to be searched</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The Base 64 string of the png image</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="GUI_client.photometrics_from_csv">
+<span class="sig-prename descclassname"><span class="pre">GUI_client.</span></span><span class="sig-name descname"><span class="pre">photometrics_from_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GUI_client.PathLike</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#GUI_client.photometrics_from_csv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes a csv ecg file and converts it to a b64 string and heart metrics</p>
+<p>This function takes a csv file with two columns and preprocesses that file,
+assigning those columns to either the ‘time’ or ‘voltage’ column in a
+DataFrame. That DataFrame is then converted to matplotlib figure which is
+converted to a b64 string image and a series of relevant metrics for ECGs.
+The figure conversion step creates a temporary ‘temp.png’ file which the
+img_to_b64 function uses to generate the b64 string. After this is
+accomplished, the temporary file is deleted.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>file_name</strong> (<em>Pathlike</em>) – The file path of the csv data file to be preprocessed</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The b64 image and relevant heart rhythm metrics</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Tuple[str, dict]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Server_gui_client</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="database.html">database module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ecg_analysis.html">ecg_analysis package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ecg_analysis.tests.html">ecg_analysis.tests package</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">GUI_client module</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Server_gui_client</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">GUI_client module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="database.html">database module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ecg_analysis.html">ecg_analysis package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="server.html">server module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html">tests package</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="server.html">server module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests.html">tests package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="ecg_analysis.tests.html" title="previous chapter">ecg_analysis.tests package</a></li>
+      <li>Next: <a href="modules.html" title="next chapter">Server_gui_client</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Aaron Earle-Richardson.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_build/html/_sources/GUI_client.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
