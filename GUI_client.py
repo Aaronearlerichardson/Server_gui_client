@@ -13,7 +13,7 @@ from ecg_analysis.calculations import get_metrics
 from ecg_analysis.ecg_reader import preprocess_data
 from server import db, try_intify
 
-server = "http://vcm-23126.vm.duke.edu:5000"
+server = "http://localhost:5000"
 PathLike = TypeVar("PathLike", str, bytes, os.PathLike)
 i_file = "temp.png"
 

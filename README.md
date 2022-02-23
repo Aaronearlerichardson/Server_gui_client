@@ -1,8 +1,8 @@
-# final-project-richardson
+# Sever GUI Client
 
 [![Python package](https://github.com/BME547-Fall2021/final-project-richardson/actions/workflows/python-package.yml/badge.svg)](https://github.com/BME547-Fall2021/final-project-richardson/actions/workflows/python-package.yml)
 
-This Project involved the creation of a database to store patient electrocardiogram information, and to access that database via and easy to use client side graphic user interface.
+This Project involved the creation of a database to store patient medical image information, and to access that database via and easy to use client side graphic user interface.
 
 Please refer to the `project_assignment.md` file for a description of the problem assignment. 
 
@@ -10,7 +10,8 @@ Please refer to [This Link](https://github.com/dward2/BME547/blob/main/Lectures/
 
 [Link to Repository](https://github.com/BME547-Fall2021/final-project-richardson-reyes)
 
-## _Virtual Machine URL:_ http://vcm-23126.vm.duke.edu:5000
+## _Server URL:_ 
+`<IP Address of your server device>` (may be just `localhost` for testing purposes)
 ## _Github Work:_
 * Go to github repository
 * Clone repository SSH file 
