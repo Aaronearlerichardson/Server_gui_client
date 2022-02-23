@@ -9,3 +9,6 @@ mne
 scipy
 matplotlib
 neurokit2
+ipyvtklink
+ipympl
+pybids

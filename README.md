@@ -10,6 +10,25 @@ Please refer to [This Link](https://github.com/dward2/BME547/blob/main/Lectures/
 
 [Link to Repository](https://github.com/BME547-Fall2021/final-project-richardson-reyes)
 
+## _Big Picture Design_:
+
+![Server_design](images/img.png)
+
+1. A client sends EEG data (binary file data format) via a POST request to a server, which raises an alert on the server
+
+2. The server stores this data on the database
+
+3. The server sends an alert as a server-side post request to a Nurse's station, 
+
+4. This alert will pop up a GUI where the nurse can confirm that they have attended to the patient, and store any qualitative notes on the server
+
+5. The server will send an email (server-side post request) to that patient's attending physician
+
+6. The email contains a link to a GUI (stored on the server, accessed via GET request) containing a 3D rendered image of the brain which will allow the attending to click on and identify the significant electrodes. The selected electrode IDs will be stored on the server to be accessed later for when the seizure location is being determined
+
+   1. Components of this GUI will be imported from this workflow: https://mne.tools/stable/auto_tutorials/clinical/10_ieeg_localize.html#marking-the-location-of-each-electrode-contact
+
+
 ## _Server URL:_ 
 `<IP Address of your server device>` (may be just `localhost` for testing purposes)
 ## _Github Work:_
