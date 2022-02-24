@@ -6,9 +6,11 @@ This Project involved the creation of a database to store patient medical image 
 
 Please refer to the `project_assignment.md` file for a description of the problem assignment. 
 
+## [Documentation](https://aaronearlerichardson.github.io/Server_gui_client/)
+
 Please refer to [This Link](https://github.com/dward2/BME547/blob/main/Lectures/sphinx.md) for how to use sphinx 
 
-[Link to Repository](https://github.com/BME547-Fall2021/final-project-richardson-reyes)
+[Link to Original Repository](https://github.com/BME547-Fall2021/final-project-richardson-reyes)
 
 ## _Big Picture Design_:
 
@@ -28,6 +30,9 @@ Please refer to [This Link](https://github.com/dward2/BME547/blob/main/Lectures/
 
    1. Components of this GUI will be imported from this workflow: https://mne.tools/stable/auto_tutorials/clinical/10_ieeg_localize.html#marking-the-location-of-each-electrode-contact
 
+## _Video Demonstration:_
+
+![video_demonstration](images/Gui_demonstration.mp4)
 
 ## _Server URL:_ 
 `<IP Address of your server device>` (may be just `localhost` for testing purposes)
