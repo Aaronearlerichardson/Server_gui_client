@@ -229,19 +229,29 @@ def design_window():
         """
         file_name = filedialog.askopenfilename(
             initialdir=csv_file.get(), title="Select a File", filetypes=(
-                ("csv files", "*.csv*"), ("all files", "*.*")))
-        csv_file.set(file_name)
-        try:
-            b64_img, metrics = photometrics_from_csv(file_name)
-        except AssertionError:
-            print_to_gui("GUI only compatible with csv files")
+                ("csv files", "*.csv*"),
+                ("image files", "*.png* *.jpg* *.gif*"),
+                ("all files", "*.*")))
+        if file_name.endswith(".csv"):
+            csv_file.set(file_name)
+            try:
+                b64_img, metrics = photometrics_from_csv(file_name)
+            except AssertionError:
+                print_to_gui("GUI only compatible with csv or image files")
+                return
+            heart_rate.set(str(metrics["mean_hr_bpm"]))
+            img_label.config(text="Heart Rate: {} (bpm)".format(
+                heart_rate.get()))
+        elif file_name.endswith((".jpg", ".png", ".gif")):
+            b64_img = image_to_b64(file_name)  # TODO: Issue with jpg
+            img_label.config(text="")
+        else:
+            print_to_gui("GUI only compatible with csv or image files")
             return
         img_str.set(b64_img)
-        heart_rate.set(str(metrics["mean_hr_bpm"]))
         photo = tk.PhotoImage(data=b64_img)
         img_grid.config(image=photo)
         img_grid.image_ref = photo  # keep as a reference
-        img_label.config(text="Heart Rate: {} (bpm)".format(heart_rate.get()))
 
     def print_to_gui(msg: str):
         """Function that prints whatever message inputted to the GUI
