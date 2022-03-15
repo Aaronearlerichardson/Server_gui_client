@@ -28,6 +28,9 @@ Please refer to [This Link](https://github.com/dward2/BME547/blob/main/Lectures/
 
    1. Components of this GUI will be imported from this workflow: https://mne.tools/stable/auto_tutorials/clinical/10_ieeg_localize.html#marking-the-location-of-each-electrode-contact
 
+## _Demonstration:_
+
+![GUI Demonstration](https://github.com/Aaronearlerichardson/Server_gui_client/blob/add-video/images/Gui_demonstration.gif)
 
 ## _Server URL:_ 
 `<IP Address of your server device>` (may be just `localhost` for testing purposes)
